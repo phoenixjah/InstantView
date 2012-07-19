@@ -15,6 +15,7 @@
 		B3E527C815B796C100AA840B /* PeopleAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527C715B796C100AA840B /* PeopleAppDelegate.m */; };
 		B3E527CB15B796C100AA840B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3E527C915B796C100AA840B /* MainStoryboard.storyboard */; };
 		B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527CD15B796C100AA840B /* PeopleViewController.m */; };
+		B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,15 +23,17 @@
 		B3E527B715B796C100AA840B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3E527B915B796C100AA840B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3E527BB15B796C100AA840B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		B3E527BF15B796C100AA840B /* Instantview-Info.plist */ = {isa = PBXFileReference; path = "Instantview-Info.plist"; sourceTree = "<group>"; };
+		B3E527BF15B796C100AA840B /* Instantview-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Instantview-Info.plist"; sourceTree = "<group>"; };
 		B3E527C115B796C100AA840B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3E527C315B796C100AA840B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		B3E527C515B796C100AA840B /* Instantview-Prefix.pch */ = {isa = PBXFileReference; path = "Instantview-Prefix.pch"; sourceTree = "<group>"; };
-		B3E527C615B796C100AA840B /* PeopleAppDelegate.h */ = {isa = PBXFileReference; path = PeopleAppDelegate.h; sourceTree = "<group>"; };
+		B3E527C515B796C100AA840B /* Instantview-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Instantview-Prefix.pch"; sourceTree = "<group>"; };
+		B3E527C615B796C100AA840B /* PeopleAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeopleAppDelegate.h; sourceTree = "<group>"; };
 		B3E527C715B796C100AA840B /* PeopleAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PeopleAppDelegate.m; sourceTree = "<group>"; };
 		B3E527CA15B796C100AA840B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		B3E527CC15B796C100AA840B /* PeopleViewController.h */ = {isa = PBXFileReference; path = PeopleViewController.h; sourceTree = "<group>"; };
+		B3E527CC15B796C100AA840B /* PeopleViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeopleViewController.h; sourceTree = "<group>"; };
 		B3E527CD15B796C100AA840B /* PeopleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PeopleViewController.m; sourceTree = "<group>"; };
+		B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonalInterviewViewController.h; sourceTree = "<group>"; };
+		B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonalInterviewViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,11 +80,11 @@
 		B3E527BD15B796C100AA840B /* Instantview */ = {
 			isa = PBXGroup;
 			children = (
+				B3E527D815B799B900AA840B /* Second Hierachy */,
+				B3E527D715B799A400AA840B /* First Hierachy */,
 				B3E527C615B796C100AA840B /* PeopleAppDelegate.h */,
 				B3E527C715B796C100AA840B /* PeopleAppDelegate.m */,
 				B3E527C915B796C100AA840B /* MainStoryboard.storyboard */,
-				B3E527CC15B796C100AA840B /* PeopleViewController.h */,
-				B3E527CD15B796C100AA840B /* PeopleViewController.m */,
 				B3E527BE15B796C100AA840B /* Supporting Files */,
 			);
 			path = Instantview;
@@ -96,6 +99,24 @@
 				B3E527C515B796C100AA840B /* Instantview-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B3E527D715B799A400AA840B /* First Hierachy */ = {
+			isa = PBXGroup;
+			children = (
+				B3E527CC15B796C100AA840B /* PeopleViewController.h */,
+				B3E527CD15B796C100AA840B /* PeopleViewController.m */,
+			);
+			name = "First Hierachy";
+			sourceTree = "<group>";
+		};
+		B3E527D815B799B900AA840B /* Second Hierachy */ = {
+			isa = PBXGroup;
+			children = (
+				B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */,
+				B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */,
+			);
+			name = "Second Hierachy";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -164,6 +185,7 @@
 				B3E527C415B796C100AA840B /* main.m in Sources */,
 				B3E527C815B796C100AA840B /* PeopleAppDelegate.m in Sources */,
 				B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */,
+				B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
