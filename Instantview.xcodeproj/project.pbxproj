@@ -16,6 +16,13 @@
 		B3E527CB15B796C100AA840B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3E527C915B796C100AA840B /* MainStoryboard.storyboard */; };
 		B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527CD15B796C100AA840B /* PeopleViewController.m */; };
 		B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */; };
+		B3E527EA15B7A05A00AA840B /* Photo.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E715B7A05A00AA840B /* Photo.png */; };
+		B3E527EB15B7A05A00AA840B /* Note.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E815B7A05A00AA840B /* Note.png */; };
+		B3E527EC15B7A05A00AA840B /* Quote.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E915B7A05A00AA840B /* Quote.png */; };
+		B3E527FD15B8FC9700AA840B /* PhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527FC15B8FC9700AA840B /* PhotoCell.m */; };
+		B3E5280015B9104300AA840B /* QuoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527FF15B9104300AA840B /* QuoteCell.m */; };
+		B3E5280315B92A2000AA840B /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5280215B92A1F00AA840B /* NoteCell.m */; };
+		B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5280415B939A700AA840B /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +41,16 @@
 		B3E527CD15B796C100AA840B /* PeopleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PeopleViewController.m; sourceTree = "<group>"; };
 		B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonalInterviewViewController.h; sourceTree = "<group>"; };
 		B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonalInterviewViewController.m; sourceTree = "<group>"; };
+		B3E527E715B7A05A00AA840B /* Photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Photo.png; sourceTree = "<group>"; };
+		B3E527E815B7A05A00AA840B /* Note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Note.png; sourceTree = "<group>"; };
+		B3E527E915B7A05A00AA840B /* Quote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Quote.png; sourceTree = "<group>"; };
+		B3E527FB15B8FC9700AA840B /* PhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCell.h; sourceTree = "<group>"; };
+		B3E527FC15B8FC9700AA840B /* PhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCell.m; sourceTree = "<group>"; };
+		B3E527FE15B9104300AA840B /* QuoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuoteCell.h; sourceTree = "<group>"; };
+		B3E527FF15B9104300AA840B /* QuoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuoteCell.m; sourceTree = "<group>"; };
+		B3E5280115B92A1F00AA840B /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoteCell.h; sourceTree = "<group>"; };
+		B3E5280215B92A1F00AA840B /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoteCell.m; sourceTree = "<group>"; };
+		B3E5280415B939A700AA840B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */,
 				B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */,
 				B3E527BA15B796C100AA840B /* Foundation.framework in Frameworks */,
 				B3E527BC15B796C100AA840B /* CoreGraphics.framework in Frameworks */,
@@ -70,6 +88,7 @@
 		B3E527B615B796C100AA840B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E5280415B939A700AA840B /* QuartzCore.framework */,
 				B3E527B715B796C100AA840B /* UIKit.framework */,
 				B3E527B915B796C100AA840B /* Foundation.framework */,
 				B3E527BB15B796C100AA840B /* CoreGraphics.framework */,
@@ -80,8 +99,8 @@
 		B3E527BD15B796C100AA840B /* Instantview */ = {
 			isa = PBXGroup;
 			children = (
-				B3E527D815B799B900AA840B /* Second Hierachy */,
 				B3E527D715B799A400AA840B /* First Hierachy */,
+				B3E527D815B799B900AA840B /* Second Hierachy */,
 				B3E527C615B796C100AA840B /* PeopleAppDelegate.h */,
 				B3E527C715B796C100AA840B /* PeopleAppDelegate.m */,
 				B3E527C915B796C100AA840B /* MainStoryboard.storyboard */,
@@ -113,10 +132,35 @@
 		B3E527D815B799B900AA840B /* Second Hierachy */ = {
 			isa = PBXGroup;
 			children = (
+				B3E527E615B79FF700AA840B /* Images */,
+				B3E527D915B79F3800AA840B /* SubViews */,
 				B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */,
 				B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */,
 			);
 			name = "Second Hierachy";
+			sourceTree = "<group>";
+		};
+		B3E527D915B79F3800AA840B /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				B3E527FB15B8FC9700AA840B /* PhotoCell.h */,
+				B3E527FC15B8FC9700AA840B /* PhotoCell.m */,
+				B3E527FE15B9104300AA840B /* QuoteCell.h */,
+				B3E527FF15B9104300AA840B /* QuoteCell.m */,
+				B3E5280115B92A1F00AA840B /* NoteCell.h */,
+				B3E5280215B92A1F00AA840B /* NoteCell.m */,
+			);
+			name = SubViews;
+			sourceTree = "<group>";
+		};
+		B3E527E615B79FF700AA840B /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				B3E527E715B7A05A00AA840B /* Photo.png */,
+				B3E527E815B7A05A00AA840B /* Note.png */,
+				B3E527E915B7A05A00AA840B /* Quote.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -172,6 +216,9 @@
 			files = (
 				B3E527C215B796C100AA840B /* InfoPlist.strings in Resources */,
 				B3E527CB15B796C100AA840B /* MainStoryboard.storyboard in Resources */,
+				B3E527EA15B7A05A00AA840B /* Photo.png in Resources */,
+				B3E527EB15B7A05A00AA840B /* Note.png in Resources */,
+				B3E527EC15B7A05A00AA840B /* Quote.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +233,9 @@
 				B3E527C815B796C100AA840B /* PeopleAppDelegate.m in Sources */,
 				B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */,
 				B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */,
+				B3E527FD15B8FC9700AA840B /* PhotoCell.m in Sources */,
+				B3E5280015B9104300AA840B /* QuoteCell.m in Sources */,
+				B3E5280315B92A2000AA840B /* NoteCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

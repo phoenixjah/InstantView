@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+@class PhotoCell;
 
 @interface PersonalInterviewViewController : UIViewController
 
