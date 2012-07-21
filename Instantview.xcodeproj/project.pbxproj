@@ -24,6 +24,8 @@
 		B3E5280015B9104300AA840B /* QuoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527FF15B9104300AA840B /* QuoteCell.m */; };
 		B3E5280315B92A2000AA840B /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5280215B92A1F00AA840B /* NoteCell.m */; };
 		B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5280415B939A700AA840B /* QuartzCore.framework */; };
+		B3F2840515BB00C90016BB94 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840415BB00C90016BB94 /* background.jpg */; };
+		B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840715BB04240016BB94 /* PortraitCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +55,8 @@
 		B3E5280115B92A1F00AA840B /* NoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoteCell.h; sourceTree = "<group>"; };
 		B3E5280215B92A1F00AA840B /* NoteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoteCell.m; sourceTree = "<group>"; };
 		B3E5280415B939A700AA840B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B3F2840415BB00C90016BB94 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
+		B3F2840715BB04240016BB94 /* PortraitCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PortraitCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +156,7 @@
 				B3E527FF15B9104300AA840B /* QuoteCell.m */,
 				B3E5280115B92A1F00AA840B /* NoteCell.h */,
 				B3E5280215B92A1F00AA840B /* NoteCell.m */,
+				B3F2840715BB04240016BB94 /* PortraitCell.xib */,
 			);
 			name = SubViews;
 			sourceTree = "<group>";
@@ -159,6 +164,7 @@
 		B3E527E615B79FF700AA840B /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B3F2840415BB00C90016BB94 /* background.jpg */,
 				B3E527E715B7A05A00AA840B /* Photo.png */,
 				B3E527E815B7A05A00AA840B /* Note.png */,
 				B3E527E915B7A05A00AA840B /* Quote.png */,
@@ -223,6 +229,8 @@
 				B3E527EB15B7A05A00AA840B /* Note.png in Resources */,
 				B3E527EC15B7A05A00AA840B /* Quote.png in Resources */,
 				B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */,
+				B3F2840515BB00C90016BB94 /* background.jpg in Resources */,
+				B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

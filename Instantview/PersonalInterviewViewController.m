@@ -27,6 +27,7 @@
 @synthesize shareResultBtn = _shareResultBtn;
 @synthesize datas = _datas;
 @synthesize tableView = _tableView;
+@synthesize portraitCell;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
@@ -86,29 +87,37 @@ static CGFloat NoteCellHeight = 173;
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //look up which type
-    
     NSString *cellType = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTypeKey];
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellType];
-    if (cell == nil) {
-        if ([cellType isEqualToString:PHOTO_CELL]) {
-            
-            cell = [[PhotoCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                    reuseIdentifier:PHOTO_CELL];
-        
-        }else if ([cellType isEqualToString:NOTE_CELL]) {
-            
-            cell = [[NoteCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                   reuseIdentifier:NOTE_CELL ];
-        
-        }else if ([cellType isEqualToString:QUOTE_CELL]) {
-            
-            cell = [[QuoteCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                    reuseIdentifier:QUOTE_CELL];
-        }else {
-            NSLog(@"In CellForRowAtIndexPath Error");
+    //if the first one, alloc the special one
+    if (indexPath.row == 0) {
+        [[NSBundle mainBundle] loadNibNamed:@"PortraitCell" owner:self options:nil ];
+        cell = portraitCell;
+        self.portraitCell = nil;
+    }else {
+    
+        if (cell == nil) {
+            if ([cellType isEqualToString:PHOTO_CELL]) {
+                
+                cell = [[PhotoCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                        reuseIdentifier:PHOTO_CELL];
+                
+            }else if ([cellType isEqualToString:NOTE_CELL]) {
+                
+                cell = [[NoteCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                       reuseIdentifier:NOTE_CELL ];
+                
+            }else if ([cellType isEqualToString:QUOTE_CELL]) {
+                
+                cell = [[QuoteCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                        reuseIdentifier:QUOTE_CELL];
+            }else {
+                NSLog(@"In CellForRowAtIndexPath Error");
+            }
         }
     }
     cell.textLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
+    
     return cell;
 }
 
@@ -150,8 +159,9 @@ static CGFloat NoteCellHeight = 173;
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    [self.tableView.backgroundView addSubview:[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]]];
     [self.view addSubview:self.tableView];
-
+    self.tableView.separatorColor = [UIColor clearColor];
     
     
     //put add btn

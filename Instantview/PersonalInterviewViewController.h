@@ -7,8 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class PhotoCell;
 
 @interface PersonalInterviewViewController : UIViewController
-
+@property (nonatomic,assign) IBOutlet UITableViewCell *portraitCell;
 @end

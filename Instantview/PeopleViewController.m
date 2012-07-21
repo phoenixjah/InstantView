@@ -53,6 +53,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
+    self.tableView.separatorColor = [UIColor clearColor];
     //put ADD function btn
     self.addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     self.addNewPeopleBtn.frame = CGRectMake(10, 10, 80,80);
