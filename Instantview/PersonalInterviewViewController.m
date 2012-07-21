@@ -15,7 +15,7 @@
 #define NOTE_CELL @"NoteCell"
 #define QUOTE_CELL @"QuoteCell"
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource>
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate>
 @property (nonatomic,strong) UIButton *addElementBtn;
 @property (nonatomic,strong) UIButton *shareResultBtn;
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -29,10 +29,11 @@
 @synthesize tableView = _tableView;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
-static CGFloat ElementWidth = 320;
 static CGFloat PhotoCellHeight = 290;
 static CGFloat QuoteCellHeight = 121;
 static CGFloat NoteCellHeight = 173;
+
+#pragma mark - Setter
 
 #pragma mark - Share Result Btn Functions
 
@@ -45,9 +46,33 @@ static CGFloat NoteCellHeight = 173;
 
 -(void)addElementPressed:(id)sender{
     //different elements could be added, ask for which one
-    //pass the choice to create new view
+    UIActionSheet *chooseTypeToAdd = [[UIActionSheet alloc] initWithTitle:@"Choose Type To Add"
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Photo",@"Quote",@"Note", nil];
+    [chooseTypeToAdd showInView:self.view];
 }
-
+#pragma mark - ActionSheet Delegate
+-(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    //NSLog(@"%d",buttonIndex);
+    //Photo btn index = 0, Quote = 1, Note = 2
+    switch (buttonIndex) {
+        case 0:
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
+            [self.tableView reloadData];
+            break;
+        case 1:
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey, nil]];
+            [self.tableView reloadData];
+            break;
+        case 2:
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, nil]];
+            [self.tableView reloadData];
+            break;
+        
+        default://cancel
+            break;
+    }
+}
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -97,16 +122,20 @@ static CGFloat NoteCellHeight = 173;
     }
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
 #pragma mark - View Controller Life Cycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
 	// Do any additional setup after loading the view.
     //setup modal
     self.datas = [NSMutableArray array];
     
     [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
-    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey, nil]];
     [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, nil]];
     
     //setup subviews template
@@ -137,6 +166,10 @@ static CGFloat NoteCellHeight = 173;
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
+    self.datas = nil;
+    self.addElementBtn = nil;
+    self.shareResultBtn = nil;
+    self.tableView = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{

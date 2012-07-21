@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface QuoteCell : UITableViewCell
-@property (nonatomic,assign) UITextView *description;
+@interface QuoteCell : UITableViewCell<UITextViewDelegate>
+@property (nonatomic,strong) UITextView *description;
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
 		B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B715B796C100AA840B /* UIKit.framework */; };
 		B3E527BA15B796C100AA840B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B915B796C100AA840B /* Foundation.framework */; };
 		B3E527BC15B796C100AA840B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527BB15B796C100AA840B /* CoreGraphics.framework */; };
@@ -26,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
 		B3E527B315B796C100AA840B /* Instantview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instantview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E527B715B796C100AA840B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3E527B915B796C100AA840B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -125,6 +127,7 @@
 			children = (
 				B3E527CC15B796C100AA840B /* PeopleViewController.h */,
 				B3E527CD15B796C100AA840B /* PeopleViewController.m */,
+				B333577A15BA7B9100522B08 /* PersonListCell.xib */,
 			);
 			name = "First Hierachy";
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 				B3E527EA15B7A05A00AA840B /* Photo.png in Resources */,
 				B3E527EB15B7A05A00AA840B /* Note.png in Resources */,
 				B3E527EC15B7A05A00AA840B /* Quote.png in Resources */,
+				B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +351,7 @@
 				B3E527D315B796C100AA840B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

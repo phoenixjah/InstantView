@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PeopleViewController : UIViewController
-
+@property (nonatomic,assign) IBOutlet UITableViewCell *peopleCell;
 @end
