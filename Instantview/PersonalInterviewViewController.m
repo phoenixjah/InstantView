@@ -29,6 +29,7 @@
 @synthesize tableView = _tableView;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
+static NSString *kCellTextKey = @"ContentOfCell";
 static CGFloat PhotoCellHeight = 290;
 static CGFloat QuoteCellHeight = 121;
 static CGFloat NoteCellHeight = 173;
@@ -57,21 +58,22 @@ static CGFloat NoteCellHeight = 173;
     //Photo btn index = 0, Quote = 1, Note = 2
     switch (buttonIndex) {
         case 0:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,@"",kCellTextKey, nil]];
             [self.tableView reloadData];
             break;
         case 1:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey, nil]];
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,@"What did they said?",kCellTextKey, nil]];
             [self.tableView reloadData];
             break;
         case 2:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, nil]];
+            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, @"What do you think?",kCellTextKey,nil]];
             [self.tableView reloadData];
             break;
         
         default://cancel
             break;
     }
+    [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - PhotoCellHeight) animated:YES];
 }
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -106,23 +108,28 @@ static CGFloat NoteCellHeight = 173;
             NSLog(@"In CellForRowAtIndexPath Error");
         }
     }
-    
+    cell.textLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
     return cell;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellType = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTypeKey];
-    
+    CGFloat cellHeight;
     if ([cellType isEqualToString:PHOTO_CELL]) {
-        return PhotoCellHeight;
+        cellHeight = PhotoCellHeight;
     }else if ([cellType isEqualToString:NOTE_CELL]) {
-        return NoteCellHeight;
+        cellHeight = NoteCellHeight;
     }else if([cellType isEqualToString:QUOTE_CELL]){
-        return QuoteCellHeight;
+        cellHeight = QuoteCellHeight;
     }
+    
+    return cellHeight;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    //NSLog(@"%d",indexPath.row);
+    UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
+    [self.tableView setContentOffset:CGPointMake(0, selectedCell.frame.origin.y - 10.0) animated:YES];
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -136,7 +143,7 @@ static CGFloat NoteCellHeight = 173;
     self.datas = [NSMutableArray array];
     
     [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
-    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, nil]];
+    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,@"What do you think?",kCellTextKey, nil]];
     
     //setup subviews template
         

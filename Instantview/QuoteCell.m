@@ -20,9 +20,11 @@
         UIImage *background = [UIImage imageNamed:@"Quote.png"];
         self.contentView.layer.contents = (id)background.CGImage;
         
-        self.description = [[UITextView alloc] initWithFrame:CGRectMake(10, 10, 320, self.contentView.frame.size.height)];
-        
-        [self.contentView addSubview:self.description];
+        self.textLabel.textColor = [UIColor grayColor];
+        self.textLabel.lineBreakMode = UILineBreakModeWordWrap;
+        self.textLabel.numberOfLines = 0;
+        self.textLabel.textAlignment = UITextAlignmentCenter;
+        self.textLabel.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
@@ -33,4 +35,5 @@
 
     // Configure the view for the selected state
 }
+
 @end

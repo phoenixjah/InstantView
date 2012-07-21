@@ -19,6 +19,12 @@
         // Initialization code
         UIImage *background = [UIImage imageNamed:@"Note.png"];
         self.contentView.layer.contents = (id)background.CGImage;
+        
+        self.textLabel.textColor = [UIColor grayColor];
+        self.textLabel.lineBreakMode = UILineBreakModeWordWrap;
+        self.textLabel.numberOfLines = 0;
+        self.textLabel.textAlignment = UITextAlignmentCenter;
+        self.textLabel.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
