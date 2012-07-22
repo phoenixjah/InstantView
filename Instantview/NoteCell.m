@@ -25,6 +25,9 @@
         self.textLabel.numberOfLines = 0;
         self.textLabel.textAlignment = UITextAlignmentCenter;
         self.textLabel.backgroundColor = [UIColor clearColor];
+        
+        self.description = [[UITextView alloc] initWithFrame:self.frame];
+        [self.contentView addSubview:self.description];
     }
     return self;
 }

@@ -15,7 +15,7 @@
 #define NOTE_CELL @"NoteCell"
 #define QUOTE_CELL @"QuoteCell"
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate>
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UITextViewDelegate>
 @property (nonatomic,strong) UIButton *addElementBtn;
 @property (nonatomic,strong) UIButton *shareResultBtn;
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -35,6 +35,15 @@ static CGFloat PhotoCellHeight = 290;
 static CGFloat QuoteCellHeight = 121;
 static CGFloat NoteCellHeight = 173;
 
+#pragma mark - Text Input Delegate
+-(void)textFieldDidBeginEditing:(UITextField *)textField{
+    //NSLog(@"textFieldBeginEdit");
+    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 20) animated:YES];
+}
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return YES;
+}
 #pragma mark - Setter
 
 #pragma mark - Share Result Btn Functions
@@ -74,7 +83,9 @@ static CGFloat NoteCellHeight = 173;
         default://cancel
             break;
     }
-    [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - PhotoCellHeight) animated:YES];
+    if (buttonIndex != 3) {//cancel
+        [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - PhotoCellHeight) animated:YES];
+    }
 }
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
