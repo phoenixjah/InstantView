@@ -33,6 +33,7 @@
     //add pepople btn pressed
     //new a view controller
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
+    newPersonViewController.view.tag = [self.datas count];
     //push it into modal
     [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"Unknow",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
     //go to next view controller
@@ -115,6 +116,7 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     PersonalInterviewViewController *nextController = [[self.datas objectAtIndex:indexPath.row] objectForKey:kViewControllerKey];
+    
     [self.navigationController pushViewController:nextController animated:YES];
 }
 @end

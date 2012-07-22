@@ -10,4 +10,5 @@
 
 @interface PersonalInterviewViewController : UIViewController
 @property (nonatomic,assign) IBOutlet UITableViewCell *portraitCell;
+@property (nonatomic,assign) IBOutlet UITableViewCell *photoCell;
 @end

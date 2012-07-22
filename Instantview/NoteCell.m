@@ -24,6 +24,7 @@
         self.textLabel.lineBreakMode = UILineBreakModeWordWrap;
         self.textLabel.numberOfLines = 0;
         self.textLabel.textAlignment = UITextAlignmentCenter;
+        self.textLabel.tag = 1;
         self.textLabel.backgroundColor = [UIColor clearColor];
     }
     return self;

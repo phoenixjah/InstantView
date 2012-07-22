@@ -9,7 +9,9 @@
 #import "PersonalInterviewViewController.h"
 #import "QuoteCell.h"
 #import "NoteCell.h"
-#import "PhotoCell.h"
+//#import "PhotoCell.h"
+#import <QuartzCore/QuartzCore.h>
+#import <MessageUI/MessageUI.h>
 
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
@@ -17,8 +19,11 @@
 #define DEFAULT_NOTE_MESSAGE @"What do you think?"
 #define DEFAULT_QUOTE_MESSAGE @"What did they say?"
 
+#define PHOTO_TAG 3
+#define TEXT_TAG 1
 #define CELL_INPUT 20
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate>
+
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate>
 @property (nonatomic,strong) UIButton *addElementBtn;
 @property (nonatomic,strong) UIButton *shareResultBtn;
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -31,7 +36,7 @@
 @synthesize shareResultBtn = _shareResultBtn;
 @synthesize datas = _datas;
 @synthesize tableView = _tableView;
-@synthesize portraitCell;
+@synthesize portraitCell,photoCell;
 @synthesize selectedRow = _selectedRow;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
@@ -64,9 +69,82 @@ static CGFloat PortraitCellHeight = 317;
 
 -(void)shareResultPressed:(id)sender{
     //write a pdf
+    NSString *pdfPath = [self generatePDF];
     //send it through email
+    [self sendMailWithAttach:pdfPath];
+}
+-(void)sendMailWithAttach:(NSString*)filePath{
+    MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+    mailer.mailComposeDelegate = self;
+    [mailer setSubject:[NSString stringWithFormat:@"Interview%d Result",self.view.tag+1]];
+    
+    
+    //ATTACH FILE
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]){//Does file exist?
+        //NSLog(@"in NewCardSorting sendResult File exists to attach");
+        
+        NSData *myData = [NSData dataWithContentsOfFile:filePath];
+        
+        [mailer addAttachmentData:myData mimeType:@"application/pdf"
+                         fileName:@"result.pdf"];
+        
+    }
+    
+    //CREATE EMAIL BODY TEXT
+    [mailer setMessageBody:@"Conducted at date:" isHTML:NO];
+    mailer.modalPresentationStyle = UIModalPresentationPageSheet;
+    
+    //PRESENT THE MAIL COMPOSITION INTERFACE
+    [self presentViewController:mailer animated:YES completion:nil];
+
+}
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error{
+    //NSLog(@"in mailConpose result");
+
+        [self dismissViewControllerAnimated:YES 
+                                 completion:nil
+         ];//Clear the compose email view controller
+    
+    
 }
 
+-(NSString*)generatePDF{
+    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
+    
+    //print screen
+    UIGraphicsBeginImageContext(self.tableView.contentSize);
+    [self.tableView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+
+    //[self.view addSubview:[[UIImageView alloc]initWithImage:resultingImage]];
+    //draw pdf
+    UIGraphicsBeginPDFContextToFile(pdfFileName, CGRectZero, nil);
+    
+    CGSize pageSize = self.tableView.contentSize;
+    BOOL done = NO;
+    do 
+    {
+        //Start a new page.
+        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
+        
+        //Draw text fo our header.
+        //[self drawHeader];
+        
+        //Draw an image
+        [resultingImage drawInRect:CGRectMake( (pageSize.width - resultingImage.size.width/2)/2, 350, resultingImage.size.width/2, resultingImage.size.height/2)];
+        done = YES;
+    } 
+    while (!done);
+    
+    // Close the PDF context and write the contents out.
+    UIGraphicsEndPDFContext();
+    
+    return pdfFileName;
+}
 #pragma mark - Add Element Btn Functions
 
 -(void)addElementPressed:(id)sender{
@@ -122,8 +200,9 @@ static CGFloat PortraitCellHeight = 317;
         if (cell == nil) {
             if ([cellType isEqualToString:PHOTO_CELL]) {
                 
-                cell = [[PhotoCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                        reuseIdentifier:PHOTO_CELL];
+                [[NSBundle mainBundle] loadNibNamed:@"PhotoCell" owner:self options:nil ];
+                cell = photoCell;
+                self.photoCell = nil;
                 
             }else if ([cellType isEqualToString:NOTE_CELL]) {
                 
@@ -144,10 +223,12 @@ static CGFloat PortraitCellHeight = 317;
         
     }
     if ([cellType isEqualToString:PHOTO_CELL] || [cellType isEqualToString:@"PortraitCell"]) {
-        UIImageView *photoCell = (UIImageView*)[cell viewWithTag:3];
-        photoCell.image = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
+        UIImageView *myPhotoCell = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
+        NSString *fullPath = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
+        myPhotoCell.image = [UIImage imageWithContentsOfFile:fullPath];
     }
-    cell.textLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
+    UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
+    cellLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
     
     return cell;
 }
@@ -163,12 +244,14 @@ static CGFloat PortraitCellHeight = 317;
     }else if([cellType isEqualToString:QUOTE_CELL]){
         cellHeight = QuoteCellHeight;
     }
-    
+    if (indexPath.row == [self.datas count]) {//last row
+        cellHeight = cellHeight + 80;
+    }
     return cellHeight;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    //NSLog(@"%d",indexPath.row);
+    NSLog(@"%d",indexPath.row);
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     self.selectedRow = indexPath.row;
     
@@ -197,8 +280,15 @@ static CGFloat PortraitCellHeight = 317;
 }
 #pragma mark - ImagePicker Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
-    //push the image to model
-    [[self.datas objectAtIndex:self.selectedRow] setValue:image forKey:kCellPhotoKey];
+    //store image to document
+    NSData *imageData = UIImagePNGRepresentation(image); //convert image into .png format.
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
+    NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
+    NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_%d.png",self.view.tag,self.selectedRow]]; //add our image to the path
+    
+    [[NSFileManager defaultManager] createFileAtPath:fullPath contents:imageData attributes:nil]; //finally save the path (image)
+    //push the path at document to model
+    [[self.datas objectAtIndex:self.selectedRow] setValue:fullPath forKey:kCellPhotoKey];
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow 
                                                                                        inSection:0]]
                           withRowAnimation:UITableViewRowAnimationNone

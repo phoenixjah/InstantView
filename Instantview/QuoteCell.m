@@ -25,7 +25,8 @@
         self.textLabel.numberOfLines = 0;
         self.textLabel.textAlignment = UITextAlignmentCenter;
         self.textLabel.backgroundColor = [UIColor clearColor];
-        [self.textLabel setFont:[UIFont fontWithName:@"kefa" size:20.0]];
+        self.textLabel.tag = 1;
+        [self.textLabel setFont:[UIFont fontWithName:@"Kefa" size:20.0]];
     }
     return self;
 }
