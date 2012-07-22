@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B31AB8DA15BC3E0B00DFC97B /* Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8D915BC3E0B00DFC97B /* Portrait.png */; };
+		B31AB8DF15BC419F00DFC97B /* Quote.png in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8DE15BC419F00DFC97B /* Quote.png */; };
+		B31AB8E115BC422900DFC97B /* Photo.png in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8E015BC422900DFC97B /* Photo.png */; };
 		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
 		B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BF928515BBDED0003BF245 /* MessageUI.framework */; };
 		B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B715B796C100AA840B /* UIKit.framework */; };
@@ -18,9 +21,7 @@
 		B3E527CB15B796C100AA840B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3E527C915B796C100AA840B /* MainStoryboard.storyboard */; };
 		B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527CD15B796C100AA840B /* PeopleViewController.m */; };
 		B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */; };
-		B3E527EA15B7A05A00AA840B /* Photo.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E715B7A05A00AA840B /* Photo.png */; };
 		B3E527EB15B7A05A00AA840B /* Note.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E815B7A05A00AA840B /* Note.png */; };
-		B3E527EC15B7A05A00AA840B /* Quote.png in Resources */ = {isa = PBXBuildFile; fileRef = B3E527E915B7A05A00AA840B /* Quote.png */; };
 		B3E527FD15B8FC9700AA840B /* PhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527FC15B8FC9700AA840B /* PhotoCell.m */; };
 		B3E5280015B9104300AA840B /* QuoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E527FF15B9104300AA840B /* QuoteCell.m */; };
 		B3E5280315B92A2000AA840B /* NoteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5280215B92A1F00AA840B /* NoteCell.m */; };
@@ -30,6 +31,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B31AB8D915BC3E0B00DFC97B /* Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Portrait.png; sourceTree = "<group>"; };
+		B31AB8DE15BC419F00DFC97B /* Quote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Quote.png; sourceTree = "<group>"; };
+		B31AB8E015BC422900DFC97B /* Photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Photo.png; sourceTree = "<group>"; };
 		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
 		B3BF928515BBDED0003BF245 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		B3E527B315B796C100AA840B /* Instantview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instantview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -47,9 +51,7 @@
 		B3E527CD15B796C100AA840B /* PeopleViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PeopleViewController.m; sourceTree = "<group>"; };
 		B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PersonalInterviewViewController.h; sourceTree = "<group>"; };
 		B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonalInterviewViewController.m; sourceTree = "<group>"; };
-		B3E527E715B7A05A00AA840B /* Photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Photo.png; sourceTree = "<group>"; };
 		B3E527E815B7A05A00AA840B /* Note.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Note.png; sourceTree = "<group>"; };
-		B3E527E915B7A05A00AA840B /* Quote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Quote.png; sourceTree = "<group>"; };
 		B3E527FB15B8FC9700AA840B /* PhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoCell.h; sourceTree = "<group>"; };
 		B3E527FC15B8FC9700AA840B /* PhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoCell.m; sourceTree = "<group>"; };
 		B3E527FE15B9104300AA840B /* QuoteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuoteCell.h; sourceTree = "<group>"; };
@@ -169,9 +171,10 @@
 			isa = PBXGroup;
 			children = (
 				B3F2840415BB00C90016BB94 /* background.jpg */,
-				B3E527E715B7A05A00AA840B /* Photo.png */,
+				B31AB8D915BC3E0B00DFC97B /* Portrait.png */,
+				B31AB8DE15BC419F00DFC97B /* Quote.png */,
+				B31AB8E015BC422900DFC97B /* Photo.png */,
 				B3E527E815B7A05A00AA840B /* Note.png */,
-				B3E527E915B7A05A00AA840B /* Quote.png */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -229,12 +232,13 @@
 			files = (
 				B3E527C215B796C100AA840B /* InfoPlist.strings in Resources */,
 				B3E527CB15B796C100AA840B /* MainStoryboard.storyboard in Resources */,
-				B3E527EA15B7A05A00AA840B /* Photo.png in Resources */,
 				B3E527EB15B7A05A00AA840B /* Note.png in Resources */,
-				B3E527EC15B7A05A00AA840B /* Quote.png in Resources */,
 				B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */,
 				B3F2840515BB00C90016BB94 /* background.jpg in Resources */,
 				B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */,
+				B31AB8DA15BC3E0B00DFC97B /* Portrait.png in Resources */,
+				B31AB8DF15BC419F00DFC97B /* Quote.png in Resources */,
+				B31AB8E115BC422900DFC97B /* Photo.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

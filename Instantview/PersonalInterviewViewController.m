@@ -37,14 +37,15 @@
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
 static NSString *kCellPhotoKey = @"PhotoOfCell";
-static CGFloat PhotoCellHeight = 290;
-static CGFloat QuoteCellHeight = 121;
+static CGFloat PhotoCellHeight = 263;
+static CGFloat QuoteCellHeight = 127;
 static CGFloat NoteCellHeight = 173;
+static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     //NSLog(@"textFieldBeginEdit");
-    if (textField.tag != CELL_INPUT) {
+    if (textField.tag != CELL_INPUT) {//if called by CELL_INPUT, than scroll already, no scroll again
     [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 20) animated:YES];
     }
 }
@@ -100,6 +101,9 @@ static CGFloat NoteCellHeight = 173;
         [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - PhotoCellHeight) animated:YES];
     }
 }
+
+#pragma mark - Add Photo/Text Functions
+
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -114,11 +118,6 @@ static CGFloat NoteCellHeight = 173;
     NSString *cellType = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTypeKey];
     UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:cellType];
     //if the first one, alloc the special one
-    if (indexPath.row == 0) {
-        [[NSBundle mainBundle] loadNibNamed:@"PortraitCell" owner:self options:nil ];
-        cell = portraitCell;
-        self.portraitCell = nil;
-    }else {
     
         if (cell == nil) {
             if ([cellType isEqualToString:PHOTO_CELL]) {
@@ -135,10 +134,14 @@ static CGFloat NoteCellHeight = 173;
                 
                 cell = [[QuoteCell alloc] initWithStyle:UITableViewCellStyleDefault
                                         reuseIdentifier:QUOTE_CELL];
+            }else if ([cellType isEqualToString:@"PortraitCell"]) {
+                [[NSBundle mainBundle] loadNibNamed:@"PortraitCell" owner:self options:nil ];
+                cell = portraitCell;
+                self.portraitCell = nil;
             }else {
                 NSLog(@"In CellForRowAtIndexPath Error");
             }
-        }
+        
     }
     if ([cellType isEqualToString:PHOTO_CELL] || [cellType isEqualToString:@"PortraitCell"]) {
         UIImageView *photoCell = (UIImageView*)[cell viewWithTag:3];
@@ -151,7 +154,8 @@ static CGFloat NoteCellHeight = 173;
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString *cellType = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTypeKey];
-    CGFloat cellHeight;
+    CGFloat cellHeight = PortraitCellHeight;
+    
     if ([cellType isEqualToString:PHOTO_CELL]) {
         cellHeight = PhotoCellHeight;
     }else if ([cellType isEqualToString:NOTE_CELL]) {
@@ -169,18 +173,13 @@ static CGFloat NoteCellHeight = 173;
     self.selectedRow = indexPath.row;
     
     [self.tableView setContentOffset:CGPointMake(0, selectedCell.frame.origin.y - 10.0) animated:YES];
-    if ([selectedCell.reuseIdentifier isEqualToString:PHOTO_CELL]) {//pick image
-        //NSLog(@"%@",selectedCell.reuseIdentifier);
+    
+    //selected then is edited
+    if ([selectedCell.reuseIdentifier isEqualToString:PHOTO_CELL] || [selectedCell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//pick image
         UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
         imagePicker.delegate = self;
         [self presentModalViewController:imagePicker animated:YES];
-        
-    }else if ([selectedCell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//pick image
-        //NSLog(@"Portrait");
-        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
-        imagePicker.delegate = self;
-        [self presentModalViewController:imagePicker animated:YES];
-        
+    
     }else{//edit content
         selectedCell.alpha = 0.3;
         UITextField *cellContent = [[UITextField alloc] initWithFrame:CGRectMake(80, selectedCell.frame.size.height/2, 180, 80)];
@@ -215,7 +214,7 @@ static CGFloat NoteCellHeight = 173;
     //setup modal
     self.datas = [NSMutableArray array];
     
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey, nil]];
     [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
     
     //setup subviews template
@@ -254,7 +253,6 @@ static CGFloat NoteCellHeight = 173;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
 }
 
 #pragma mark - Device Orientation

@@ -46,6 +46,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    
     //init data modal
     self.datas = [NSMutableArray array];
     
@@ -72,8 +73,6 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    //hide the navigation bar
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
     [self.tableView reloadData];
     //check if there is datas to show
 }
