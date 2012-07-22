@@ -9,7 +9,8 @@
 #import "PhotoCell.h"
 #import <QuartzCore/QuartzCore.h>
 @implementation PhotoCell
-
+@synthesize photo = _photo
+;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -17,6 +18,11 @@
         // Initialization code
         UIImage *background = [UIImage imageNamed:@"Photo.png"];
         self.contentView.layer.contents = (id)background.CGImage;
+        
+        self.photo = [[UIImageView alloc] initWithFrame:CGRectMake(10, 20, 300, 170)];
+        self.photo.backgroundColor = [UIColor blueColor];
+        self.photo.tag = 3;
+        [self addSubview:self.photo];
     }
     return self;
 }

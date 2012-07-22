@@ -34,7 +34,7 @@
     //new a view controller
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
     //push it into modal
-    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"Unknow",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"Unknow",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
     //go to next view controller
     [self.navigationController pushViewController:newPersonViewController animated:YES];
 }
@@ -66,6 +66,9 @@
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
+    self.tableView = nil;
+    self.datas = nil;
+    self.addNewPeopleBtn = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{

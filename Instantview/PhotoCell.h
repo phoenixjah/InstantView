@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface PhotoCell : UITableViewCell
-
+@property (nonatomic,strong) UIImageView *photo;
 @end

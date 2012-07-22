@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
+		B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BF928515BBDED0003BF245 /* MessageUI.framework */; };
 		B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B715B796C100AA840B /* UIKit.framework */; };
 		B3E527BA15B796C100AA840B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B915B796C100AA840B /* Foundation.framework */; };
 		B3E527BC15B796C100AA840B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527BB15B796C100AA840B /* CoreGraphics.framework */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
+		B3BF928515BBDED0003BF245 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		B3E527B315B796C100AA840B /* Instantview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instantview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E527B715B796C100AA840B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3E527B915B796C100AA840B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */,
 				B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */,
 				B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */,
 				B3E527BA15B796C100AA840B /* Foundation.framework in Frameworks */,
@@ -94,6 +97,7 @@
 		B3E527B615B796C100AA840B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3BF928515BBDED0003BF245 /* MessageUI.framework */,
 				B3E5280415B939A700AA840B /* QuartzCore.framework */,
 				B3E527B715B796C100AA840B /* UIKit.framework */,
 				B3E527B915B796C100AA840B /* Foundation.framework */,

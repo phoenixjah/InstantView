@@ -14,12 +14,16 @@
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
 #define QUOTE_CELL @"QuoteCell"
+#define DEFAULT_NOTE_MESSAGE @"What do you think?"
+#define DEFAULT_QUOTE_MESSAGE @"What did they say?"
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UITextViewDelegate>
+#define CELL_INPUT 20
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate>
 @property (nonatomic,strong) UIButton *addElementBtn;
 @property (nonatomic,strong) UIButton *shareResultBtn;
 @property (nonatomic,strong) NSMutableArray *datas;
 @property (nonatomic,strong) UITableView *tableView;
+@property (nonatomic,assign) NSInteger selectedRow;
 @end
 
 @implementation PersonalInterviewViewController
@@ -28,9 +32,11 @@
 @synthesize datas = _datas;
 @synthesize tableView = _tableView;
 @synthesize portraitCell;
+@synthesize selectedRow = _selectedRow;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
+static NSString *kCellPhotoKey = @"PhotoOfCell";
 static CGFloat PhotoCellHeight = 290;
 static CGFloat QuoteCellHeight = 121;
 static CGFloat NoteCellHeight = 173;
@@ -38,10 +44,17 @@ static CGFloat NoteCellHeight = 173;
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
     //NSLog(@"textFieldBeginEdit");
+    if (textField.tag != CELL_INPUT) {
     [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 20) animated:YES];
+    }
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
+    if (textField.tag == CELL_INPUT) {
+        [[self.datas objectAtIndex:self.selectedRow] setValue:textField.text forKey:kCellTextKey];
+        [textField removeFromSuperview];
+        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    }
     return YES;
 }
 #pragma mark - Setter
@@ -68,15 +81,15 @@ static CGFloat NoteCellHeight = 173;
     //Photo btn index = 0, Quote = 1, Note = 2
     switch (buttonIndex) {
         case 0:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,@"",kCellTextKey, nil]];
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,@"",kCellTextKey, nil]];
             [self.tableView reloadData];
             break;
         case 1:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,@"What did they said?",kCellTextKey, nil]];
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,DEFAULT_QUOTE_MESSAGE,kCellTextKey, nil]];
             [self.tableView reloadData];
             break;
         case 2:
-            [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, @"What do you think?",kCellTextKey,nil]];
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, DEFAULT_NOTE_MESSAGE,kCellTextKey,nil]];
             [self.tableView reloadData];
             break;
         
@@ -127,6 +140,10 @@ static CGFloat NoteCellHeight = 173;
             }
         }
     }
+    if ([cellType isEqualToString:PHOTO_CELL] || [cellType isEqualToString:@"PortraitCell"]) {
+        UIImageView *photoCell = (UIImageView*)[cell viewWithTag:3];
+        photoCell.image = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
+    }
     cell.textLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
     
     return cell;
@@ -149,10 +166,46 @@ static CGFloat NoteCellHeight = 173;
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     //NSLog(@"%d",indexPath.row);
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
+    self.selectedRow = indexPath.row;
+    
     [self.tableView setContentOffset:CGPointMake(0, selectedCell.frame.origin.y - 10.0) animated:YES];
+    if ([selectedCell.reuseIdentifier isEqualToString:PHOTO_CELL]) {//pick image
+        //NSLog(@"%@",selectedCell.reuseIdentifier);
+        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+        imagePicker.delegate = self;
+        [self presentModalViewController:imagePicker animated:YES];
+        
+    }else if ([selectedCell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//pick image
+        //NSLog(@"Portrait");
+        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
+        imagePicker.delegate = self;
+        [self presentModalViewController:imagePicker animated:YES];
+        
+    }else{//edit content
+        selectedCell.alpha = 0.3;
+        UITextField *cellContent = [[UITextField alloc] initWithFrame:CGRectMake(80, selectedCell.frame.size.height/2, 180, 80)];
+        cellContent.delegate = self;
+        cellContent.tag = CELL_INPUT;
+        
+        if ([selectedCell.textLabel.text isEqualToString:DEFAULT_NOTE_MESSAGE] == NO && [selectedCell.textLabel.text isEqualToString:DEFAULT_QUOTE_MESSAGE] == NO) {
+            cellContent.text = selectedCell.textLabel.text;
+        }
+        
+        [self.view addSubview:cellContent];
+        [cellContent becomeFirstResponder];
+    }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-
+#pragma mark - ImagePicker Delegate
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
+    //push the image to model
+    [[self.datas objectAtIndex:self.selectedRow] setValue:image forKey:kCellPhotoKey];
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow 
+                                                                                       inSection:0]]
+                          withRowAnimation:UITableViewRowAnimationNone
+     ];
+    [self dismissModalViewControllerAnimated:YES];
+}
 #pragma mark - View Controller Life Cycle
 - (void)viewDidLoad
 {
@@ -162,8 +215,8 @@ static CGFloat NoteCellHeight = 173;
     //setup modal
     self.datas = [NSMutableArray array];
     
-    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
-    [self.datas addObject:[NSDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,@"What do you think?",kCellTextKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
     
     //setup subviews template
         
