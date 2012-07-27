@@ -34,6 +34,7 @@
     //new a view controller
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
     newPersonViewController.view.tag = [self.datas count];
+
     //push it into modal
     [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"Unknow",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
     //go to next view controller
@@ -51,6 +52,7 @@
     //init data modal
     self.datas = [NSMutableArray array];
     
+    //setup TableView
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
@@ -75,6 +77,12 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [self.tableView reloadData];
+    //layout navigation bar
+    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.png"] forBarMetrics:UIBarMetricsDefault];
+    [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,
+                                                                       [UIColor grayColor], UITextAttributeTextShadowColor,
+                                                                       [NSValue valueWithUIOffset:UIOffsetMake(0, 0)], UITextAttributeTextShadowOffset,
+                                                                       [UIFont systemFontOfSize:18.0], UITextAttributeFont, nil]];
     //check if there is datas to show
 }
 #pragma mark - Device Orientation
@@ -102,12 +110,14 @@
         self.peopleCell = nil;
     }
     UILabel *label;
-    label = (UILabel*)[cell viewWithTag:1];
-    label.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kNameKey];
+    label = (UILabel*)[cell viewWithTag:10];
+    PersonalInterviewViewController *theController = (PersonalInterviewViewController*)[[self.datas objectAtIndex:indexPath.row] objectForKey:kViewControllerKey];
+    label.text = theController.title;
+    //NSLog(@"%@",theController.title);
     
     UIImageView *portrait;
-    portrait = (UIImageView*) [cell viewWithTag:0];
-    portrait.image = [[self.datas objectAtIndex:indexPath.row] objectForKey:kImageKey];
+    portrait = (UIImageView*) [cell viewWithTag:3];
+    portrait.image = [UIImage imageWithContentsOfFile:theController.dataSourcePath];
     return cell;
 }
 

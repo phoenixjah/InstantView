@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface PersonalInterviewViewController : UIViewController
+@interface PersonalInterviewViewController : UIViewController{
+    NSString *dataSourcePath;
+}
 @property (nonatomic,assign) IBOutlet UITableViewCell *portraitCell;
 @property (nonatomic,assign) IBOutlet UITableViewCell *photoCell;
+@property (nonatomic,strong) NSString *dataSourcePath;
 @end

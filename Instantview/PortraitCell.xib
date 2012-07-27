@@ -61,6 +61,7 @@
 								<reference key="NSSuperview" ref="974931251"/>
 								<reference key="NSNextKeyView" ref="506084847"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
+								<bool key="IBUIAutoresizesSubviews">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
 								<int key="IBUIContentMode">2</int>
 								<int key="IBUITag">3</int>
@@ -70,13 +71,13 @@
 							<object class="IBUITextField" id="956821265">
 								<reference key="NSNextResponder" ref="974931251"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{12, 196}, {183, 41}}</string>
+								<string key="NSFrame">{{12, 187}, {308, 55}}</string>
 								<reference key="NSSuperview" ref="974931251"/>
 								<reference key="NSNextKeyView" ref="765126610"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
-								<int key="IBUITag">1</int>
+								<int key="IBUITag">10</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<int key="IBUIContentVerticalAlignment">0</int>
 								<string key="IBUIText"/>
@@ -107,8 +108,9 @@
 							<object class="IBUITextField" id="765126610">
 								<reference key="NSNextResponder" ref="974931251"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{12, 238}, {296, 31}}</string>
+								<string key="NSFrame">{{12, 243}, {308, 59}}</string>
 								<reference key="NSSuperview" ref="974931251"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>

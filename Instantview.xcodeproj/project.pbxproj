@@ -12,6 +12,8 @@
 		B31AB8E115BC422900DFC97B /* Photo.png in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8E015BC422900DFC97B /* Photo.png */; };
 		B31AB8E515BC514900DFC97B /* Kefa.ttc in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8E415BC514900DFC97B /* Kefa.ttc */; };
 		B31AB8E715BC616700DFC97B /* PhotoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B31AB8E615BC616700DFC97B /* PhotoCell.xib */; };
+		B324A6CE15C1968E00E4EBF2 /* int_nav.png in Resources */ = {isa = PBXBuildFile; fileRef = B324A6CD15C1968E00E4EBF2 /* int_nav.png */; };
+		B324A6D015C196E000E4EBF2 /* list_nav.png in Resources */ = {isa = PBXBuildFile; fileRef = B324A6CF15C196E000E4EBF2 /* list_nav.png */; };
 		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
 		B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BF928515BBDED0003BF245 /* MessageUI.framework */; };
 		B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B715B796C100AA840B /* UIKit.framework */; };
@@ -38,6 +40,8 @@
 		B31AB8E015BC422900DFC97B /* Photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Photo.png; sourceTree = "<group>"; };
 		B31AB8E415BC514900DFC97B /* Kefa.ttc */ = {isa = PBXFileReference; lastKnownFileType = file; name = Kefa.ttc; path = ../Kefa.ttc; sourceTree = "<group>"; };
 		B31AB8E615BC616700DFC97B /* PhotoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PhotoCell.xib; sourceTree = "<group>"; };
+		B324A6CD15C1968E00E4EBF2 /* int_nav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = int_nav.png; sourceTree = "<group>"; };
+		B324A6CF15C196E000E4EBF2 /* list_nav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list_nav.png; sourceTree = "<group>"; };
 		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
 		B3BF928515BBDED0003BF245 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		B3E527B315B796C100AA840B /* Instantview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instantview.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,7 +181,9 @@
 			isa = PBXGroup;
 			children = (
 				B3F2840415BB00C90016BB94 /* background.jpg */,
+				B324A6CF15C196E000E4EBF2 /* list_nav.png */,
 				B31AB8D915BC3E0B00DFC97B /* Portrait.png */,
+				B324A6CD15C1968E00E4EBF2 /* int_nav.png */,
 				B31AB8DE15BC419F00DFC97B /* Quote.png */,
 				B31AB8E015BC422900DFC97B /* Photo.png */,
 				B3E527E815B7A05A00AA840B /* Note.png */,
@@ -247,6 +253,8 @@
 				B31AB8DF15BC419F00DFC97B /* Quote.png in Resources */,
 				B31AB8E115BC422900DFC97B /* Photo.png in Resources */,
 				B31AB8E715BC616700DFC97B /* PhotoCell.xib in Resources */,
+				B324A6CE15C1968E00E4EBF2 /* int_nav.png in Resources */,
+				B324A6D015C196E000E4EBF2 /* list_nav.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

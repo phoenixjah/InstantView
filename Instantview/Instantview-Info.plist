@@ -8,6 +8,8 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>CFBundleIdentifier</key>
 	<string>phoenixjah.${PRODUCT_NAME:rfc1034identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

@@ -22,6 +22,7 @@
 #define PHOTO_TAG 3
 #define TEXT_TAG 1
 #define CELL_INPUT 20
+#define NAME_TAG 10
 
 @interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate>
 @property (nonatomic,strong) UIButton *addElementBtn;
@@ -38,6 +39,7 @@
 @synthesize tableView = _tableView;
 @synthesize portraitCell,photoCell;
 @synthesize selectedRow = _selectedRow;
+@synthesize dataSourcePath = _dataSourcePath;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
@@ -49,9 +51,11 @@ static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    //NSLog(@"textFieldBeginEdit");
+    NSLog(@"textFieldBeginEdit tag = %d",textField.tag);
+    CGPoint convertedPoint = [self.tableView convertPoint:textField.frame.origin  fromView:textField];
+    //NSLog(@"original %f,converted %f",textField.frame.origin.y,convertedPoint.y);
     if (textField.tag != CELL_INPUT) {//if called by CELL_INPUT, than scroll already, no scroll again
-    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 20) animated:YES];
+    [self.tableView setContentOffset:CGPointMake(0, convertedPoint.y - 320) animated:YES];
     }
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -60,6 +64,9 @@ static CGFloat PortraitCellHeight = 317;
         [[self.datas objectAtIndex:self.selectedRow] setValue:textField.text forKey:kCellTextKey];
         [textField removeFromSuperview];
         [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        self.tableView.userInteractionEnabled = YES;
+    }else if (textField.tag == NAME_TAG) {
+        self.title = textField.text;
     }
     return YES;
 }
@@ -107,24 +114,32 @@ static CGFloat PortraitCellHeight = 317;
     
     
 }
+#pragma mark - PDF Generating Function
+-(void)drawText:(NSString*)textToDraw at:(CGRect)rectToDraw{
+    
+    [textToDraw drawInRect:rectToDraw
+                  withFont:[UIFont systemFontOfSize:16.0] 
+             lineBreakMode:UILineBreakModeWordWrap
+     ];
+    
+}
+
+-(void)drawImage:(NSString*)pathForImage at:(CGRect)rectToDraw{
+    UIImage *imageToDraw = [[UIImage alloc] initWithContentsOfFile:pathForImage];
+    [imageToDraw drawInRect:rectToDraw];
+}
 
 -(NSString*)generatePDF{
-    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag];
+    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag+1];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
-    
-    //print screen
-    UIGraphicsBeginImageContext(self.tableView.contentSize);
-    [self.tableView.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    //[self.view addSubview:[[UIImageView alloc]initWithImage:resultingImage]];
     //draw pdf
     UIGraphicsBeginPDFContextToFile(pdfFileName, CGRectZero, nil);
-    
     CGSize pageSize = self.tableView.contentSize;
+    //print screen
+    //[self.view addSubview:[[UIImageView alloc]initWithImage:resultingImage]];
+    /*  
     BOOL done = NO;
     do 
     {
@@ -139,7 +154,30 @@ static CGFloat PortraitCellHeight = 317;
         done = YES;
     } 
     while (!done);
+    */
     
+    UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
+    NSString *cellType;
+    //UITableViewCell *cellInTable;
+    CGFloat beginY = 0.0;
+    for (NSDictionary *eachCell in self.datas) {
+        cellType = [eachCell objectForKey:kCellTypeKey];
+
+        if ([cellType isEqualToString:NOTE_CELL]) {
+            //it's the text content
+            [[UIImage imageNamed:@"Note.png"] drawInRect:CGRectMake(20, beginY, 300, NoteCellHeight)];
+            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(20, beginY+NoteCellHeight/2, 300, NoteCellHeight)];
+            beginY = beginY + NoteCellHeight;
+        }else if ([cellType isEqualToString:QUOTE_CELL]) {
+            [[UIImage imageNamed:@"Quote.png"] drawInRect:CGRectMake(20, beginY, 300, QuoteCellHeight)];
+            [self drawText:[NSString stringWithFormat:@"'%@'",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(20, beginY + QuoteCellHeight/2, 300, QuoteCellHeight)];
+            beginY = beginY + QuoteCellHeight;
+        }else {
+                    //it's the image content
+                    [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGRectMake(20, beginY, 280, 200)];
+            beginY = beginY + PhotoCellHeight;
+                        }
+    }
     // Close the PDF context and write the contents out.
     UIGraphicsEndPDFContext();
     
@@ -229,6 +267,7 @@ static CGFloat PortraitCellHeight = 317;
     }
     UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
     cellLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     
     return cell;
 }
@@ -244,14 +283,16 @@ static CGFloat PortraitCellHeight = 317;
     }else if([cellType isEqualToString:QUOTE_CELL]){
         cellHeight = QuoteCellHeight;
     }
-    if (indexPath.row == [self.datas count]) {//last row
-        cellHeight = cellHeight + 80;
+    //NSLog(@"index row %d, datas count %d",indexPath.row,[self.datas count]);
+    if (indexPath.row+1 == [self.datas count]) {
+        cellHeight = cellHeight + 50.0;
+        //NSLog(@"last row %d, cellHeight %f",indexPath.row,cellHeight);
     }
     return cellHeight;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"%d",indexPath.row);
+    //NSLog(@"%d",indexPath.row);
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     self.selectedRow = indexPath.row;
     
@@ -265,6 +306,7 @@ static CGFloat PortraitCellHeight = 317;
     
     }else{//edit content
         selectedCell.alpha = 0.3;
+        self.tableView.userInteractionEnabled = NO;;
         UITextField *cellContent = [[UITextField alloc] initWithFrame:CGRectMake(80, selectedCell.frame.size.height/2, 180, 80)];
         cellContent.delegate = self;
         cellContent.tag = CELL_INPUT;
@@ -272,14 +314,15 @@ static CGFloat PortraitCellHeight = 317;
         if ([selectedCell.textLabel.text isEqualToString:DEFAULT_NOTE_MESSAGE] == NO && [selectedCell.textLabel.text isEqualToString:DEFAULT_QUOTE_MESSAGE] == NO) {
             cellContent.text = selectedCell.textLabel.text;
         }
-        
+        selectedCell.textLabel.text = @"";
         [self.view addSubview:cellContent];
         [cellContent becomeFirstResponder];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 #pragma mark - ImagePicker Delegate
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo{
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
     //store image to document
     NSData *imageData = UIImagePNGRepresentation(image); //convert image into .png format.
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
@@ -343,6 +386,21 @@ static CGFloat PortraitCellHeight = 317;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    //layout navigation bar
+
+    //load data
+    
+}
+
+-(void)viewWillDisappear:(BOOL)animated{
+    self.dataSourcePath = [[self.datas objectAtIndex:0] objectForKey:kCellPhotoKey];
+    //write data
+    /*
+    if([self.datas writeToFile:self.dataSourcePath atomically:YES] == NO){
+        NSLog(@"write to plist file error, path %@",self.dataSourcePath);
+    }
+    */
+    //NSLog(@"self title %@",self.title);
 }
 
 #pragma mark - Device Orientation
