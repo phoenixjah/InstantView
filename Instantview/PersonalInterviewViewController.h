@@ -13,5 +13,7 @@
 }
 @property (nonatomic,assign) IBOutlet UITableViewCell *portraitCell;
 @property (nonatomic,assign) IBOutlet UITableViewCell *photoCell;
+@property (nonatomic,assign) IBOutlet UITableViewCell *noteCell;
+@property (nonatomic,assign) IBOutlet UITableViewCell *quoteCell;
 @property (nonatomic,strong) NSString *dataSourcePath;
 @end

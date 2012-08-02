@@ -15,6 +15,7 @@
 		B324A6CE15C1968E00E4EBF2 /* int_nav.png in Resources */ = {isa = PBXBuildFile; fileRef = B324A6CD15C1968E00E4EBF2 /* int_nav.png */; };
 		B324A6D015C196E000E4EBF2 /* list_nav.png in Resources */ = {isa = PBXBuildFile; fileRef = B324A6CF15C196E000E4EBF2 /* list_nav.png */; };
 		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
+		B34E762115C4319D00ECB2D7 /* QuoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B34E762015C4319D00ECB2D7 /* QuoteCell.xib */; };
 		B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BF928515BBDED0003BF245 /* MessageUI.framework */; };
 		B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B715B796C100AA840B /* UIKit.framework */; };
 		B3E527BA15B796C100AA840B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E527B915B796C100AA840B /* Foundation.framework */; };
@@ -32,6 +33,7 @@
 		B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5280415B939A700AA840B /* QuartzCore.framework */; };
 		B3F2840515BB00C90016BB94 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840415BB00C90016BB94 /* background.jpg */; };
 		B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840715BB04240016BB94 /* PortraitCell.xib */; };
+		B3F40B5B15C2942B0005B212 /* NoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F40B5A15C2942B0005B212 /* NoteCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,7 @@
 		B324A6CD15C1968E00E4EBF2 /* int_nav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = int_nav.png; sourceTree = "<group>"; };
 		B324A6CF15C196E000E4EBF2 /* list_nav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list_nav.png; sourceTree = "<group>"; };
 		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
+		B34E762015C4319D00ECB2D7 /* QuoteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuoteCell.xib; sourceTree = "<group>"; };
 		B3BF928515BBDED0003BF245 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		B3E527B315B796C100AA840B /* Instantview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Instantview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E527B715B796C100AA840B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -69,6 +72,7 @@
 		B3E5280415B939A700AA840B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		B3F2840415BB00C90016BB94 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 		B3F2840715BB04240016BB94 /* PortraitCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PortraitCell.xib; sourceTree = "<group>"; };
+		B3F40B5A15C2942B0005B212 /* NoteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoteCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,8 +172,10 @@
 				B31AB8E615BC616700DFC97B /* PhotoCell.xib */,
 				B3E527FE15B9104300AA840B /* QuoteCell.h */,
 				B3E527FF15B9104300AA840B /* QuoteCell.m */,
+				B34E762015C4319D00ECB2D7 /* QuoteCell.xib */,
 				B3E5280115B92A1F00AA840B /* NoteCell.h */,
 				B3E5280215B92A1F00AA840B /* NoteCell.m */,
+				B3F40B5A15C2942B0005B212 /* NoteCell.xib */,
 				B3F2840715BB04240016BB94 /* PortraitCell.xib */,
 				B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */,
 				B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */,
@@ -255,6 +261,8 @@
 				B31AB8E715BC616700DFC97B /* PhotoCell.xib in Resources */,
 				B324A6CE15C1968E00E4EBF2 /* int_nav.png in Resources */,
 				B324A6D015C196E000E4EBF2 /* list_nav.png in Resources */,
+				B3F40B5B15C2942B0005B212 /* NoteCell.xib in Resources */,
+				B34E762115C4319D00ECB2D7 /* QuoteCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

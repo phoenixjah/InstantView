@@ -18,11 +18,11 @@
     if (self) {
         // Initialization code
         UIImage *background = [UIImage imageNamed:@"Quote.png"];
-        self.contentView.layer.contents = (id)background.CGImage;
-        
+        [self.contentView addSubview:[[UIImageView alloc]initWithImage:background]];
+
         self.textLabel.textColor = [UIColor grayColor];
         self.textLabel.lineBreakMode = UILineBreakModeWordWrap;
-        self.textLabel.numberOfLines = 0;
+        self.textLabel.numberOfLines = 3;
         self.textLabel.textAlignment = UITextAlignmentCenter;
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.textLabel.tag = 1;
