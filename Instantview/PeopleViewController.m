@@ -17,13 +17,11 @@
 
 @interface PeopleViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong) NSMutableArray *datas;
-@property (nonatomic,strong) UIButton *addNewPeopleBtn;
 @property (nonatomic,strong) UITableView *tableView;
 @end
 
 @implementation PeopleViewController
 @synthesize datas = _datas;
-@synthesize addNewPeopleBtn = _addNewPeopleBtn;
 @synthesize tableView = _tableView;
 @synthesize peopleCell;
 
@@ -57,13 +55,16 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     [self.view addSubview:self.tableView];
-    self.tableView.separatorColor = [UIColor clearColor];
+    self.tableView.separatorColor = [UIColor whiteColor];
     //put ADD function btn
-    self.addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.addNewPeopleBtn.frame = CGRectMake(10, 10, 80,80);
-    [self.addNewPeopleBtn setTitle:@"Add" forState:UIControlStateNormal];
-    [self.addNewPeopleBtn addTarget:self action:@selector(addPeople:) forControlEvents:UIControlEventTouchDown];
-    [self.view addSubview:self.addNewPeopleBtn];
+    UIButton *addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    addNewPeopleBtn.frame = CGRectMake(10, 10, 80,80);
+    [addNewPeopleBtn setImage:[UIImage imageNamed:@"btn_plus_normal.png"] forState:UIControlStateNormal];
+    [addNewPeopleBtn setImage:[UIImage imageNamed:@"btn_normal_pressed.png"] forState:UIControlStateHighlighted];
+    [addNewPeopleBtn addTarget:self action:@selector(addPeople:) forControlEvents:UIControlEventTouchDown];
+    addNewPeopleBtn.frame = CGRectMake(0, 0, 39, 39);
+    UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithCustomView:addNewPeopleBtn];
+    self.navigationItem.rightBarButtonItem = addButton;
 }
 
 - (void)viewDidUnload
@@ -72,7 +73,6 @@
     // Release any retained subviews of the main view.
     self.tableView = nil;
     self.datas = nil;
-    self.addNewPeopleBtn = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{

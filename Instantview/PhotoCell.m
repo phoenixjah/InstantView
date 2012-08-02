@@ -7,23 +7,14 @@
 //
 
 #import "PhotoCell.h"
-#import <QuartzCore/QuartzCore.h>
+
 @implementation PhotoCell
-@synthesize photo = _photo
-;
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        UIImage *background = [UIImage imageNamed:@"Photo.png"];
-        self.contentView.layer.contents = (id)background.CGImage;
-        
-        self.photo = [[UIImageView alloc] initWithFrame:CGRectMake(15, 6, 290, 163)];
-        self.photo.contentMode = UIViewContentModeScaleAspectFill;
-        self.photo.tag = 3;
-        self.photo.backgroundColor = [UIColor blueColor];
-        [self addSubview:self.photo];
     }
     return self;
 }

@@ -25,6 +25,9 @@
 #define NAME_TAG 10
 
 @interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate>
+{
+    UIBarButtonItem *backBtn;
+}
 @property (nonatomic,strong) UIButton *addElementBtn;
 @property (nonatomic,strong) UIButton *shareResultBtn;
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -69,7 +72,7 @@ static CGFloat PortraitCellHeight = 317;
         [textField removeFromSuperview];
         [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
         self.tableView.userInteractionEnabled = YES;
-        self.navigationItem.hidesBackButton = NO;
+        self.navigationItem.leftBarButtonItem = backBtn;
         self.navigationItem.rightBarButtonItem = nil;
     }else if (textField.tag == NAME_TAG) {
         self.title = textField.text;
@@ -273,7 +276,7 @@ static CGFloat PortraitCellHeight = 317;
         UIImageView *myPhotoCell = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
         //load image if it is nil
         NSString *fullPath = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
-        NSLog(@"photocell path %@",fullPath);
+        //NSLog(@"photocell path %@",fullPath);
         if (fullPath == nil) {//new photoCell
             myPhotoCell.image = nil;
         }else if (myPhotoCell.image == nil) {//reload image if it is release
@@ -325,7 +328,7 @@ static CGFloat PortraitCellHeight = 317;
                                                                       action:@selector(addAction:)
                                        ];
         //self.navigationItem.rightBarButtonItem = addButton;
-        self.navigationItem.hidesBackButton = YES;
+        self.navigationItem.leftBarButtonItem = nil;
         self.tableView.userInteractionEnabled = NO;;
         UITextField *cellContent = [[UITextField alloc] initWithFrame:CGRectMake(80,selectedCell.frame.size.height/3, 180, 80)];
         cellContent.delegate = self;
@@ -334,7 +337,7 @@ static CGFloat PortraitCellHeight = 317;
         if ([selectedCell.textLabel.text isEqualToString:DEFAULT_NOTE_MESSAGE] == NO && [selectedCell.textLabel.text isEqualToString:DEFAULT_QUOTE_MESSAGE] == NO) {
             cellContent.text = selectedCell.textLabel.text;
         }
-        selectedCell.textLabel.text = @"";
+        //selectedCell.textLabel.text = @"";
         [self.view addSubview:cellContent];
         cellContent.returnKeyType = UIReturnKeyDone;
         [cellContent becomeFirstResponder];
@@ -366,6 +369,9 @@ static CGFloat PortraitCellHeight = 317;
      ];*/
     [self dismissModalViewControllerAnimated:YES];
 }
+-(void)backPrev:(id)sender{
+    [self.navigationController popViewControllerAnimated:YES];
+}
 #pragma mark - View Controller Life Cycle
 - (void)viewDidLoad
 {
@@ -387,6 +393,15 @@ static CGFloat PortraitCellHeight = 317;
     [self.view addSubview:self.tableView ];
     self.tableView.separatorColor = [UIColor clearColor];
     
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setBackgroundImage:[UIImage imageNamed:@"btn_back_normal.png"] forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"btn_back_pressed.png"]
+                      forState:UIControlStateHighlighted];
+    [button addTarget:self action:@selector(backPrev:) forControlEvents:UIControlEventTouchUpInside];
+    button.frame = CGRectMake(0, 0, 39, 39);
+    backBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
+    self.navigationItem.leftBarButtonItem = backBtn;
+    self.navigationItem.hidesBackButton = YES;
     
     //put add btn
     self.addElementBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -411,6 +426,7 @@ static CGFloat PortraitCellHeight = 317;
     self.addElementBtn = nil;
     self.shareResultBtn = nil;
     self.tableView = nil;
+    backBtn = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
