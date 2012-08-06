@@ -7,24 +7,23 @@
 //
 
 #import "PersonalInterviewViewController.h"
-#import "QuoteCell.h"
-//#import "NoteCell.h"
-//#import "PhotoCell.h"
 #import <QuartzCore/QuartzCore.h>
 #import <MessageUI/MessageUI.h>
+#import "UIImageView+ImagePackage.h"
 
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
 #define QUOTE_CELL @"QuoteCell"
 #define DEFAULT_NOTE_MESSAGE @"What do you think?"
 #define DEFAULT_QUOTE_MESSAGE @"What did they say?"
+#define DEFAULT_PHOTO_MESSAGE @"Topic of photo"
 
 #define PHOTO_TAG 3
 #define TEXT_TAG 1
-#define CELL_INPUT 20
 #define NAME_TAG 10
+#define BACKGROUND_TAG 2
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate>
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate>
 {
     UIBarButtonItem *backBtn;
 }
@@ -54,30 +53,66 @@ static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
+    self.navigationItem.leftBarButtonItem = nil;
     NSLog(@"textFieldBeginEdit tag = %d",textField.tag);
-    CGPoint convertedPoint = [self.tableView convertPoint:textField.frame.origin  fromView:textField];
+    //UITableViewCell *cell = (UITableViewCell*)[[textField superview] superview];
+    //NSLog(@"cell index %d",[self.tableView indexPathForCell:cell].row);
     //NSLog(@"original %f,converted %f",textField.frame.origin.y,convertedPoint.y);
-    if (textField.tag != CELL_INPUT) {//if called by CELL_INPUT, than scroll already, no scroll again
-    [self.tableView setContentOffset:CGPointMake(0, convertedPoint.y - 310) animated:YES];
-    }
+    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 150) animated:YES];
 }
--(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
 
+-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
+    [textField resignFirstResponder];
+    self.navigationItem.leftBarButtonItem = backBtn;
+    if (textField.tag == NAME_TAG) {
+        self.title = textField.text;
+        [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Name"];
+    }else if(textField.tag == BACKGROUND_TAG){
+        [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Background"];
+    }
     return YES;
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
-    if (textField.tag == CELL_INPUT) {
-        [[self.datas objectAtIndex:self.selectedRow] setValue:textField.text forKey:kCellTextKey];
-        [textField removeFromSuperview];
-        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-        self.tableView.userInteractionEnabled = YES;
-        self.navigationItem.leftBarButtonItem = backBtn;
-        self.navigationItem.rightBarButtonItem = nil;
-    }else if (textField.tag == NAME_TAG) {
-        self.title = textField.text;
+    UITableViewCell *cell = (UITableViewCell*)[[textField superview] superview];
+    [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y) animated:YES];
+    return YES;
+}
+
+-(void)textViewDidBeginEditing:(UITextView *)textView{
+    //NSLog(@"textView Begin");
+    self.navigationItem.leftBarButtonItem = nil;
+    UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
+    NSLog(@"cell index = %d",[self.tableView indexPathForCell:cell].row);
+    
+    //scroll view to upper area
+    //PhotoCell need special care
+    if ([cell.reuseIdentifier isEqualToString:PHOTO_CELL]) {
+        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y + 60) animated:YES];
+    }else{
+        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y - 60) animated:YES];
+    }
+    if ([textView.text isEqualToString:DEFAULT_PHOTO_MESSAGE] || [textView.text isEqualToString:DEFAULT_NOTE_MESSAGE] || [textView.text isEqualToString:DEFAULT_QUOTE_MESSAGE]) {
+        textView.text = @"";
+    }
+}
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
+    if ([text isEqualToString:@"\n"]) {
+        [textView resignFirstResponder];
+        //return NO;
     }
     return YES;
+}
+-(void)textViewDidEndEditing:(UITextView *)textView{
+    [textView resignFirstResponder];
+    self.navigationItem.leftBarButtonItem = backBtn;
+    UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+    [self.tableView scrollToRowAtIndexPath:[self.tableView indexPathForCell:cell] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+    //NSLog(@"textView Ended");
+    //put the text into data source
+    [[self.datas objectAtIndex:indexPath.row] setObject:textView.text forKey:kCellTextKey];
+    
 }
 #pragma mark - Cell Edit Funtcion
 -(void)addImageToCell{
@@ -212,19 +247,19 @@ static CGFloat PortraitCellHeight = 317;
     //Photo btn index = 0, Quote = 1, Note = 2
     switch (buttonIndex) {
         case 0:
-            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,@"",kCellTextKey, nil]];
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,DEFAULT_PHOTO_MESSAGE,kCellTextKey, nil]];
             [self.tableView reloadData];
-            [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - PhotoCellHeight - 70) animated:YES];
+
             break;
         case 1:
             [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,DEFAULT_QUOTE_MESSAGE,kCellTextKey, nil]];
             [self.tableView reloadData];
-            [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - QuoteCellHeight - 70) animated:YES];
+
             break;
         case 2:
             [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, DEFAULT_NOTE_MESSAGE,kCellTextKey,nil]];
             [self.tableView reloadData];
-            [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height - NoteCellHeight - 70) animated:YES];
+            
             break;
         
         default://cancel
@@ -263,6 +298,9 @@ static CGFloat PortraitCellHeight = 317;
                 [[NSBundle mainBundle] loadNibNamed:@"QuoteCell" owner:self options:nil ];
                 cell = quoteCell;
                 self.quoteCell = nil;
+                
+                UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
+                [cellLabel setFont:[UIFont fontWithName:@"Kefa" size:20.0]];
             }else if ([cellType isEqualToString:@"PortraitCell"]) {
                 [[NSBundle mainBundle] loadNibNamed:@"PortraitCell" owner:self options:nil ];
                 cell = portraitCell;
@@ -272,7 +310,16 @@ static CGFloat PortraitCellHeight = 317;
             }
         
     }
-    if ([cellType isEqualToString:PHOTO_CELL] || [cellType isEqualToString:@"PortraitCell"]) {
+    
+    [self configureCell:cell atIndex:indexPath];
+    
+    return cell;
+}
+
+-(void)configureCell:(UITableViewCell*)cell atIndex:(NSIndexPath*)indexPath{
+    
+    //process cell that have images
+    if ([cell.reuseIdentifier isEqualToString:PHOTO_CELL] || [cell.reuseIdentifier isEqualToString:@"PortraitCell"]) {
         UIImageView *myPhotoCell = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
         //load image if it is nil
         NSString *fullPath = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
@@ -283,11 +330,18 @@ static CGFloat PortraitCellHeight = 317;
             myPhotoCell.image = [UIImage imageWithContentsOfFile:fullPath];
         }
     }
-    UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
-    cellLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
+    //process cell's text content
+    if ([cell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//portrait cell has more than one text
+        UITextField *nameField = (UITextField*)[cell viewWithTag:NAME_TAG];
+        nameField.text = [[self.datas objectAtIndex:0] objectForKey:@"Name"];
+        self.title = nameField.text;
+        UITextField *backGround = (UITextField*)[cell viewWithTag:BACKGROUND_TAG];
+        backGround.text = [[self.datas objectAtIndex:0] objectForKey:@"Background"];
+    }else{//PhotoCell, NoteCell, QuoteCell just has one text input
+        UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
+        cellLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
+    }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    
-    return cell;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -314,50 +368,32 @@ static CGFloat PortraitCellHeight = 317;
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     self.selectedRow = indexPath.row;
     
-    [self.tableView setContentOffset:CGPointMake(0, selectedCell.frame.origin.y - 10.0) animated:YES];
+    [self.tableView setContentOffset:selectedCell.frame.origin animated:YES];
     //NSLog(@"use identifier %@",selectedCell.reuseIdentifier);
     //selected then is edited
     if ([selectedCell.reuseIdentifier isEqualToString:PHOTO_CELL] || [selectedCell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//pick image
         [self addImageToCell];
     
-    }else{//edit content
-        selectedCell.alpha = 0.3;
-        UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Cancel", @"")
-                                                                       style:UIBarButtonItemStylePlain
-                                                                      target:self
-                                                                      action:@selector(addAction:)
-                                       ];
-        //self.navigationItem.rightBarButtonItem = addButton;
-        self.navigationItem.leftBarButtonItem = nil;
-        self.tableView.userInteractionEnabled = NO;;
-        UITextField *cellContent = [[UITextField alloc] initWithFrame:CGRectMake(80,selectedCell.frame.size.height/3, 180, 80)];
-        cellContent.delegate = self;
-        cellContent.tag = CELL_INPUT;
-        
-        if ([selectedCell.textLabel.text isEqualToString:DEFAULT_NOTE_MESSAGE] == NO && [selectedCell.textLabel.text isEqualToString:DEFAULT_QUOTE_MESSAGE] == NO) {
-            cellContent.text = selectedCell.textLabel.text;
-        }
-        //selectedCell.textLabel.text = @"";
-        [self.view addSubview:cellContent];
-        cellContent.returnKeyType = UIReturnKeyDone;
-        [cellContent becomeFirstResponder];
+    }else{
+        UITextView *inputView = (UITextView*)[selectedCell viewWithTag:TEXT_TAG];
+        [inputView becomeFirstResponder];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
--(void)addAction:(UITextField*)sender{
-    
-}
+
 #pragma mark - ImagePicker Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]];
+    UIImageView *cellImage = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
     
+    image = [UIImageView imageWithImage:image scaledToSize:cellImage.frame.size];
     //store image to document
     NSData *imageData = UIImagePNGRepresentation(image); //convert image into .png format.
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
     NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
     NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_%d.png",self.view.tag,self.selectedRow]]; //add our image to the path
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]];
-    UIImageView *cellImage = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
+
     cellImage.image = image;
     [[NSFileManager defaultManager] createFileAtPath:fullPath contents:imageData attributes:nil]; //finally save the path (image)
     //push the path at document to model
@@ -381,7 +417,7 @@ static CGFloat PortraitCellHeight = 317;
     //setup modal
     self.datas = [NSMutableArray array];
     
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey,@"",@"Name",@"",@"Background", nil]];
     [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
     
     //setup subviews template

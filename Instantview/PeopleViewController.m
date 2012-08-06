@@ -54,7 +54,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    [self.view addSubview:self.tableView];
+    self.view = self.tableView;
     self.tableView.separatorColor = [UIColor whiteColor];
     //put ADD function btn
     UIButton *addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -115,9 +115,12 @@
     label.text = theController.title;
     //NSLog(@"%@",theController.title);
     
-    UIImageView *portrait;
-    portrait = (UIImageView*) [cell viewWithTag:3];
-    portrait.image = [UIImage imageWithContentsOfFile:theController.dataSourcePath];
+    UIImageView *portrait = (UIImageView*) [cell viewWithTag:3];
+    if (theController.dataSourcePath != nil) {//have image to show
+        if (portrait.image == nil) {//cache being released
+            portrait.image = [UIImage imageWithContentsOfFile:theController.dataSourcePath];
+        }
+    }
     return cell;
 }
 
