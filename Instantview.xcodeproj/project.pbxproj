@@ -39,6 +39,10 @@
 		B3F2840515BB00C90016BB94 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840415BB00C90016BB94 /* background.jpg */; };
 		B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840715BB04240016BB94 /* PortraitCell.xib */; };
 		B3F40B5B15C2942B0005B212 /* NoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F40B5A15C2942B0005B212 /* NoteCell.xib */; };
+		B3FE33BA15D1661A00ABC06D /* add_quote.png in Resources */ = {isa = PBXBuildFile; fileRef = B3FE33B615D1661A00ABC06D /* add_quote.png */; };
+		B3FE33BB15D1661A00ABC06D /* add_postit.png in Resources */ = {isa = PBXBuildFile; fileRef = B3FE33B715D1661A00ABC06D /* add_postit.png */; };
+		B3FE33BC15D1661A00ABC06D /* add_photo.png in Resources */ = {isa = PBXBuildFile; fileRef = B3FE33B815D1661A00ABC06D /* add_photo.png */; };
+		B3FE33BD15D1661A00ABC06D /* add_email.png in Resources */ = {isa = PBXBuildFile; fileRef = B3FE33B915D1661A00ABC06D /* add_email.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +88,10 @@
 		B3F2840415BB00C90016BB94 /* background.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpg; sourceTree = "<group>"; };
 		B3F2840715BB04240016BB94 /* PortraitCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PortraitCell.xib; sourceTree = "<group>"; };
 		B3F40B5A15C2942B0005B212 /* NoteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoteCell.xib; sourceTree = "<group>"; };
+		B3FE33B615D1661A00ABC06D /* add_quote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_quote.png; sourceTree = "<group>"; };
+		B3FE33B715D1661A00ABC06D /* add_postit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_postit.png; sourceTree = "<group>"; };
+		B3FE33B815D1661A00ABC06D /* add_photo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_photo.png; sourceTree = "<group>"; };
+		B3FE33B915D1661A00ABC06D /* add_email.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_email.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,12 +144,10 @@
 			children = (
 				B3E527D715B799A400AA840B /* First Hierachy */,
 				B3E527D815B799B900AA840B /* Second Hierachy */,
-				B3E527C615B796C100AA840B /* PeopleAppDelegate.h */,
-				B3E527C715B796C100AA840B /* PeopleAppDelegate.m */,
 				B3E527C915B796C100AA840B /* MainStoryboard.storyboard */,
-				B3E527BE15B796C100AA840B /* Supporting Files */,
 				B3A0D75515CA455B000CFE24 /* UIImageView+ImagePackage.h */,
 				B3A0D75615CA455B000CFE24 /* UIImageView+ImagePackage.m */,
+				B3E527BE15B796C100AA840B /* Supporting Files */,
 			);
 			path = Instantview;
 			sourceTree = "<group>";
@@ -149,6 +155,8 @@
 		B3E527BE15B796C100AA840B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B3E527C615B796C100AA840B /* PeopleAppDelegate.h */,
+				B3E527C715B796C100AA840B /* PeopleAppDelegate.m */,
 				B31AB8E415BC514900DFC97B /* Kefa.ttc */,
 				B3E527BF15B796C100AA840B /* Instantview-Info.plist */,
 				B3E527C015B796C100AA840B /* InfoPlist.strings */,
@@ -199,6 +207,10 @@
 		B3E527E615B79FF700AA840B /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B3FE33B615D1661A00ABC06D /* add_quote.png */,
+				B3FE33B715D1661A00ABC06D /* add_postit.png */,
+				B3FE33B815D1661A00ABC06D /* add_photo.png */,
+				B3FE33B915D1661A00ABC06D /* add_email.png */,
 				B3A0D75D15CA4AFF000CFE24 /* btn_back_pressed.png */,
 				B3A0D75E15CA4AFF000CFE24 /* btn_back_normal.png */,
 				B3A0D75915CA476C000CFE24 /* btn_plus_normal.png */,
@@ -284,6 +296,10 @@
 				B3A0D75C15CA476C000CFE24 /* btn_normal_pressed.png in Resources */,
 				B3A0D75F15CA4AFF000CFE24 /* btn_back_pressed.png in Resources */,
 				B3A0D76015CA4AFF000CFE24 /* btn_back_normal.png in Resources */,
+				B3FE33BA15D1661A00ABC06D /* add_quote.png in Resources */,
+				B3FE33BB15D1661A00ABC06D /* add_postit.png in Resources */,
+				B3FE33BC15D1661A00ABC06D /* add_photo.png in Resources */,
+				B3FE33BD15D1661A00ABC06D /* add_email.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

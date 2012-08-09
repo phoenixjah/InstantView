@@ -14,34 +14,25 @@
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
 #define QUOTE_CELL @"QuoteCell"
-#define DEFAULT_NOTE_MESSAGE @"What do you think?"
+#define DEFAULT_NOTE_MESSAGE @"What's the insight?"
 #define DEFAULT_QUOTE_MESSAGE @"What did they say?"
-#define DEFAULT_PHOTO_MESSAGE @"Topic of photo"
+#define DEFAULT_PHOTO_MESSAGE @"What's the photo about?"
 
 #define PHOTO_TAG 3
 #define TEXT_TAG 1
 #define NAME_TAG 10
 #define BACKGROUND_TAG 2
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UIActionSheetDelegate,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate>
-{
-    UIBarButtonItem *backBtn;
-}
-@property (nonatomic,strong) UIButton *addElementBtn;
-@property (nonatomic,strong) UIButton *shareResultBtn;
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate>
 @property (nonatomic,strong) NSMutableArray *datas;
 @property (nonatomic,strong) UITableView *tableView;
+@property (nonatomic,strong) NSArray *btns;
 @property (nonatomic,assign) NSInteger selectedRow;
+@property (nonatomic,strong) UIBarButtonItem *backBtn,*addElementBtn;
 @end
 
 @implementation PersonalInterviewViewController
-@synthesize addElementBtn = _addElementBtn;
-@synthesize shareResultBtn = _shareResultBtn;
-@synthesize datas = _datas;
-@synthesize tableView = _tableView;
 @synthesize portraitCell,photoCell,noteCell,quoteCell;
-@synthesize selectedRow = _selectedRow;
-@synthesize dataSourcePath = _dataSourcePath;
 
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
@@ -51,19 +42,45 @@ static CGFloat QuoteCellHeight = 130;
 static CGFloat NoteCellHeight = 173;
 static CGFloat PortraitCellHeight = 317;
 
+#pragma mark - Btn Setters Funcions
+-(NSArray*)btns{
+    
+    if (_btns == nil) {
+        UIButton *addPhoto,*addQuote,*addNote,*share;
+        addPhoto = [self setButtonWithImage:@"add_photo.png"];
+        addQuote = [self setButtonWithImage:@"add_quote.png"];
+        addNote = [self setButtonWithImage:@"add_postit.png"];
+        share = [self setButtonWithImage:@"add_email.png"];
+        [addQuote addTarget:self action:@selector(addElement:) forControlEvents:UIControlEventTouchUpInside];
+        [addNote addTarget:self action:@selector(addElement:) forControlEvents:UIControlEventTouchUpInside];
+        [addPhoto addTarget:self action:@selector(addElement:) forControlEvents:UIControlEventTouchUpInside];
+        [share addTarget:self action:@selector(shareResultPressed:) forControlEvents:UIControlEventTouchUpInside];
+        _btns = [NSArray arrayWithObjects:addNote,addPhoto,addQuote,share, nil];
+    }
+    return _btns;
+}
+-(UIButton*)setButtonWithImage:(NSString*)name{
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    
+    [btn setBackgroundImage:[UIImage imageNamed:name] forState:UIControlStateNormal];
+    btn.frame = CGRectMake(0, 0, 53, 53);
+    return btn;
+}
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    self.navigationItem.leftBarButtonItem = nil;
-    NSLog(@"textFieldBeginEdit tag = %d",textField.tag);
+
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    //NSLog(@"textFieldBeginEdit tag = %d",textField.tag);
     //UITableViewCell *cell = (UITableViewCell*)[[textField superview] superview];
     //NSLog(@"cell index %d",[self.tableView indexPathForCell:cell].row);
     //NSLog(@"original %f,converted %f",textField.frame.origin.y,convertedPoint.y);
-    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 150) animated:YES];
+    [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 170) animated:YES];
+    self.tableView.scrollEnabled = NO;
 }
 
 -(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
     [textField resignFirstResponder];
-    self.navigationItem.leftBarButtonItem = backBtn;
+   
     if (textField.tag == NAME_TAG) {
         self.title = textField.text;
         [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Name"];
@@ -74,6 +91,8 @@ static CGFloat PortraitCellHeight = 317;
 }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     [textField resignFirstResponder];
+    self.tableView.scrollEnabled = YES;
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
     UITableViewCell *cell = (UITableViewCell*)[[textField superview] superview];
     [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y) animated:YES];
     return YES;
@@ -81,16 +100,17 @@ static CGFloat PortraitCellHeight = 317;
 
 -(void)textViewDidBeginEditing:(UITextView *)textView{
     //NSLog(@"textView Begin");
-    self.navigationItem.leftBarButtonItem = nil;
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
+    self.tableView.userInteractionEnabled = NO;
     UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
-    NSLog(@"cell index = %d",[self.tableView indexPathForCell:cell].row);
+    //NSLog(@"cell index = %d",[self.tableView indexPathForCell:cell].row);
     
     //scroll view to upper area
     //PhotoCell need special care
     if ([cell.reuseIdentifier isEqualToString:PHOTO_CELL]) {
-        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y + 60) animated:YES];
+        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y + 80) animated:YES];
     }else{
-        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y - 60) animated:YES];
+        [self.tableView setContentOffset:CGPointMake(0, cell.frame.origin.y - 80) animated:YES];
     }
     if ([textView.text isEqualToString:DEFAULT_PHOTO_MESSAGE] || [textView.text isEqualToString:DEFAULT_NOTE_MESSAGE] || [textView.text isEqualToString:DEFAULT_QUOTE_MESSAGE]) {
         textView.text = @"";
@@ -105,7 +125,8 @@ static CGFloat PortraitCellHeight = 317;
 }
 -(void)textViewDidEndEditing:(UITextView *)textView{
     [textView resignFirstResponder];
-    self.navigationItem.leftBarButtonItem = backBtn;
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+    self.tableView.userInteractionEnabled = YES;
     UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     [self.tableView scrollToRowAtIndexPath:[self.tableView indexPathForCell:cell] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
@@ -114,6 +135,7 @@ static CGFloat PortraitCellHeight = 317;
     [[self.datas objectAtIndex:indexPath.row] setObject:textView.text forKey:kCellTextKey];
     
 }
+
 #pragma mark - Cell Edit Funtcion
 -(void)addImageToCell{
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
@@ -124,10 +146,14 @@ static CGFloat PortraitCellHeight = 317;
 #pragma mark - Share Result Btn Functions
 
 -(void)shareResultPressed:(id)sender{
+    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag+1];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
     //write a pdf
-    NSString *pdfPath = [self generatePDF];
+    [self generatePDF:pdfFileName];
     //send it through email
-    [self sendMailWithAttach:pdfPath];
+    [self sendMailWithAttach:pdfFileName];
 }
 -(void)sendMailWithAttach:(NSString*)filePath{
     MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
@@ -178,16 +204,11 @@ static CGFloat PortraitCellHeight = 317;
     [imageToDraw drawInRect:rectToDraw];
 }
 
--(NSString*)generatePDF{
-    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag+1];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
+-(void)generatePDF:(NSString*)filePath{
     //draw pdf
-    UIGraphicsBeginPDFContextToFile(pdfFileName, CGRectZero, nil);
+    UIGraphicsBeginPDFContextToFile(filePath, CGRectZero, nil);
     CGSize pageSize = self.tableView.contentSize;
-    //print screen
-    //[self.view addSubview:[[UIImageView alloc]initWithImage:resultingImage]];
+
     /*  
     BOOL done = NO;
     do 
@@ -207,7 +228,7 @@ static CGFloat PortraitCellHeight = 317;
     
     UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
     NSString *cellType;
-    //UITableViewCell *cellInTable;
+    
     CGFloat beginY = 0.0;
     for (NSDictionary *eachCell in self.datas) {
         cellType = [eachCell objectForKey:kCellTypeKey];
@@ -219,7 +240,7 @@ static CGFloat PortraitCellHeight = 317;
             beginY = beginY + NoteCellHeight;
         }else if ([cellType isEqualToString:QUOTE_CELL]) {
             [[UIImage imageNamed:@"Quote.png"] drawInRect:CGRectMake(20, beginY, 300, QuoteCellHeight)];
-            [self drawText:[NSString stringWithFormat:@"'%@'",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(20, beginY + QuoteCellHeight/2, 300, QuoteCellHeight)];
+            [self drawText:[NSString stringWithFormat:@"'%@'",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(38, beginY + QuoteCellHeight/2, 251, 63)];
             beginY = beginY + QuoteCellHeight;
         }else {
                     //it's the image content
@@ -229,42 +250,70 @@ static CGFloat PortraitCellHeight = 317;
     }
     // Close the PDF context and write the contents out.
     UIGraphicsEndPDFContext();
-    
-    return pdfFileName;
 }
 #pragma mark - Add Element Btn Functions
 
 -(void)addElementPressed:(id)sender{
-    //different elements could be added, ask for which one
-    UIActionSheet *chooseTypeToAdd = [[UIActionSheet alloc] initWithTitle:@"Choose Type To Add"
-                                                                 delegate:self
-                                                        cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Photo",@"Quote",@"Note", nil];
-    [chooseTypeToAdd showInView:self.view];
+    self.tableView.userInteractionEnabled = NO;
+    //display the option btns to add
+    __block NSInteger i;
+    CGPoint coor = self.navigationItem.rightBarButtonItem.customView.frame.origin;
+    for (UIButton* btn in self.btns) {
+        btn.center = CGPointMake(coor.x + 10, -30);
+    }
+    [UIView animateWithDuration:0.3
+                     animations:^{
+    for (i=[self.btns count]-1; i>=0; i--) {
+        UIButton *btn = [self.btns objectAtIndex:i];
+        [self.view addSubview:btn];
+        btn.center = CGPointMake(coor.x + 10, 30+i*55);
+    }
+                     }
+     ];
 }
-#pragma mark - ActionSheet Delegate
--(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex{
-    //NSLog(@"%d",buttonIndex);
-    //Photo btn index = 0, Quote = 1, Note = 2
+
+-(void)addElement:(id)sender{
+    //index of Note = 0, Photo = 1, Quote = 2
+    NSInteger buttonIndex = [self.btns indexOfObject:sender];
     switch (buttonIndex) {
         case 0:
-            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,DEFAULT_PHOTO_MESSAGE,kCellTextKey, nil]];
-            [self.tableView reloadData];
-
-            break;
-        case 1:
-            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,DEFAULT_QUOTE_MESSAGE,kCellTextKey, nil]];
-            [self.tableView reloadData];
-
-            break;
-        case 2:
             [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey, DEFAULT_NOTE_MESSAGE,kCellTextKey,nil]];
             [self.tableView reloadData];
-            
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self.datas count]-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
             break;
-        
+        case 1:
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:PHOTO_CELL,kCellTypeKey,DEFAULT_PHOTO_MESSAGE,kCellTextKey, nil]];
+            [self.tableView reloadData];
+            self.selectedRow = [self.datas count]-1;//image picker delegate would use
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
+            [self addImageToCell];
+            break;
+        case 2:
+            [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:QUOTE_CELL,kCellTypeKey,DEFAULT_QUOTE_MESSAGE,kCellTextKey, nil]];
+            [self.tableView reloadData];
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:[self.datas count]-1 inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
+            break;
         default://cancel
+            NSLog(@"WTF in addElement??");
             break;
     }
+    //disappear btns
+    __block NSInteger i;
+    CGPoint coor = self.navigationItem.rightBarButtonItem.customView.frame.origin;
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         for (i=0; i<[self.btns count]; i++) {
+                             UIButton *btn = [self.btns objectAtIndex:i];
+                             btn.center = CGPointMake(coor.x + 10, -30);
+                         }
+                     }
+                     completion:^(BOOL finished){
+                         for (UIButton* btn in self.btns) {
+                             [btn removeFromSuperview];
+                         }
+                     }
+    ];
+    self.tableView.userInteractionEnabled = YES;
 }
 
 #pragma mark - UITableView Delegate
@@ -383,6 +432,10 @@ static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - ImagePicker Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    //dispatch_queue_t handleImage = dispatch_queue_create("resize image and store", NULL);
+    //dispatch_async(handleImage, ^{
+        
+    //    dispatch_async(dispatch_get_main_queue(), ^{
     UIImage *image = [info objectForKey:UIImagePickerControllerOriginalImage];
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]];
     UIImageView *cellImage = (UIImageView*)[cell viewWithTag:PHOTO_TAG];
@@ -395,6 +448,7 @@ static CGFloat PortraitCellHeight = 317;
     NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_%d.png",self.view.tag,self.selectedRow]]; //add our image to the path
 
     cellImage.image = image;
+        
     [[NSFileManager defaultManager] createFileAtPath:fullPath contents:imageData attributes:nil]; //finally save the path (image)
     //push the path at document to model
     [[self.datas objectAtIndex:self.selectedRow] setValue:fullPath forKey:kCellPhotoKey];
@@ -402,8 +456,11 @@ static CGFloat PortraitCellHeight = 317;
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow 
                                                                                        inSection:0]]
                           withRowAnimation:UITableViewRowAnimationNone
-     ];*/
+     ];*///});
+    //});
+    //dispatch_release(handleImage);
     [self dismissModalViewControllerAnimated:YES];
+  
 }
 -(void)backPrev:(id)sender{
     [self.navigationController popViewControllerAnimated:YES];
@@ -435,23 +492,21 @@ static CGFloat PortraitCellHeight = 317;
                       forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(backPrev:) forControlEvents:UIControlEventTouchUpInside];
     button.frame = CGRectMake(0, 0, 39, 39);
-    backBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
-    self.navigationItem.leftBarButtonItem = backBtn;
+    self.backBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
+    self.navigationItem.leftBarButtonItem = self.backBtn;
     self.navigationItem.hidesBackButton = YES;
     
     //put add btn
-    self.addElementBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.addElementBtn.frame = CGRectMake(10, 10, 80, 50);
-    [self.addElementBtn setTitle:@"Add New" forState:UIControlStateNormal];
-    [self.addElementBtn addTarget:self action:@selector(addElementPressed:) forControlEvents:UIControlEventTouchDown];
-    [self.view addSubview:self.addElementBtn];
+    UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [addBtn setBackgroundImage:[UIImage imageNamed:@"btn_plus_normal.png"] forState:UIControlStateNormal];
+    [addBtn setBackgroundImage:[UIImage imageNamed:@"btn_plus_pressed.png"]
+                      forState:UIControlStateHighlighted];
+    [addBtn addTarget:self action:@selector(addElementPressed:) forControlEvents:UIControlEventTouchUpInside];
+    addBtn.frame = CGRectMake(0, 0, 39, 39);
+    self.addElementBtn = [[UIBarButtonItem alloc] initWithCustomView:addBtn];
+    self.navigationItem.rightBarButtonItem = self.addElementBtn;
     
-    //put share btn
-    self.shareResultBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    self.shareResultBtn.frame = CGRectMake(200, 10, 80, 50);
-    [self.shareResultBtn setTitle:@"Share This" forState:UIControlStateNormal];
-    [self.shareResultBtn addTarget:self action:@selector(shareResultPressed:) forControlEvents:UIControlEventTouchDown];
-    [self.view addSubview:self.shareResultBtn];
+    //set add element btns
 }
 
 - (void)viewDidUnload
@@ -459,15 +514,13 @@ static CGFloat PortraitCellHeight = 317;
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     self.datas = nil;
-    self.addElementBtn = nil;
-    self.shareResultBtn = nil;
     self.tableView = nil;
-    backBtn = nil;
+    self.btns = nil;
+    self.backBtn = nil;
+    self.addElementBtn = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    //layout navigation bar
-
     //load data
     
 }

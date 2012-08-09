@@ -21,10 +21,7 @@
 @end
 
 @implementation PeopleViewController
-@synthesize datas = _datas;
-@synthesize tableView = _tableView;
 @synthesize peopleCell;
-
 #pragma mark - Add Btn Function
 
 -(void)addPeople:(id)sender{
@@ -34,7 +31,7 @@
     newPersonViewController.view.tag = [self.datas count];
 
     //push it into modal
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"Unknow",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"New Interview",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
     //go to next view controller
     [self.navigationController pushViewController:newPersonViewController animated:YES];
 }
@@ -88,7 +85,7 @@
 #pragma mark - Device Orientation
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 #pragma mark - TableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
