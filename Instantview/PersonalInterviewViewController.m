@@ -41,6 +41,7 @@ static CGFloat PhotoCellHeight = 265;
 static CGFloat QuoteCellHeight = 130;
 static CGFloat NoteCellHeight = 173;
 static CGFloat PortraitCellHeight = 317;
+static BOOL btnsShow = NO;
 
 #pragma mark - Btn Setters Funcions
 -(NSArray*)btns{
@@ -68,11 +69,11 @@ static CGFloat PortraitCellHeight = 317;
 }
 #pragma mark - Text Input Delegate
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
+    if (btnsShow) {
+        [self clearBtns];
+    }
 
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    //NSLog(@"textFieldBeginEdit tag = %d",textField.tag);
-    //UITableViewCell *cell = (UITableViewCell*)[[textField superview] superview];
-    //NSLog(@"cell index %d",[self.tableView indexPathForCell:cell].row);
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
     //NSLog(@"original %f,converted %f",textField.frame.origin.y,convertedPoint.y);
     [self.tableView setContentOffset:CGPointMake(0, textField.frame.origin.y - 170) animated:YES];
     self.tableView.scrollEnabled = NO;
@@ -100,8 +101,11 @@ static CGFloat PortraitCellHeight = 317;
 
 -(void)textViewDidBeginEditing:(UITextView *)textView{
     //NSLog(@"textView Begin");
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
-    self.tableView.userInteractionEnabled = NO;
+    if (btnsShow) {
+        [self clearBtns];
+    }
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
+    self.tableView.scrollEnabled = NO;
     UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
     //NSLog(@"cell index = %d",[self.tableView indexPathForCell:cell].row);
     
@@ -126,7 +130,7 @@ static CGFloat PortraitCellHeight = 317;
 -(void)textViewDidEndEditing:(UITextView *)textView{
     [textView resignFirstResponder];
     [self.navigationController setNavigationBarHidden:NO animated:YES];
-    self.tableView.userInteractionEnabled = YES;
+    self.tableView.scrollEnabled = YES;
     UITableViewCell *cell = (UITableViewCell*)[[textView superview] superview];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
     [self.tableView scrollToRowAtIndexPath:[self.tableView indexPathForCell:cell] atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
@@ -138,6 +142,9 @@ static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - Cell Edit Funtcion
 -(void)addImageToCell{
+    if (btnsShow) {
+        [self clearBtns];
+    }
     UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.delegate = self;
     [self presentModalViewController:imagePicker animated:YES];
@@ -254,22 +261,33 @@ static CGFloat PortraitCellHeight = 317;
 #pragma mark - Add Element Btn Functions
 
 -(void)addElementPressed:(id)sender{
-    self.tableView.userInteractionEnabled = NO;
+    //self.tableView.allowsSelection = NO;
+    //CGPoint velocity = [self.tableView.panGestureRecognizer velocityInView:self.tableView.panGestureRecognizer.view];
+    //UIGestureRecognizerState gestureState = self.tableView.panGestureRecognizer.state;
+    
+    if (btnsShow == NO) {
     //display the option btns to add
     __block NSInteger i;
-    CGPoint coor = self.navigationItem.rightBarButtonItem.customView.frame.origin;
+    
     for (UIButton* btn in self.btns) {
-        btn.center = CGPointMake(coor.x + 10, -30);
+        btn.center = CGPointMake(288, -30);
     }
     [UIView animateWithDuration:0.3
-                     animations:^{
-    for (i=[self.btns count]-1; i>=0; i--) {
-        UIButton *btn = [self.btns objectAtIndex:i];
-        [self.view addSubview:btn];
-        btn.center = CGPointMake(coor.x + 10, 30+i*55);
+                     animations:^{ 
+                         
+                         for (i=[self.btns count]-1; i>=0; i--) {
+                             UIButton *btn = [self.btns objectAtIndex:i];
+                             [self.view addSubview:btn];
+                             btn.center = CGPointMake(288, 30+i*55);
     }
                      }
      ];
+       
+        btnsShow = YES;
+
+    }else if(btnsShow == YES){
+        [self closeTheAddBtns];//and set btnsShow = NO
+    }
 }
 
 -(void)addElement:(id)sender{
@@ -298,13 +316,16 @@ static CGFloat PortraitCellHeight = 317;
             break;
     }
     //disappear btns
+    [self closeTheAddBtns];
+}
+
+-(void)closeTheAddBtns{
     __block NSInteger i;
-    CGPoint coor = self.navigationItem.rightBarButtonItem.customView.frame.origin;
     [UIView animateWithDuration:0.5
                      animations:^{
                          for (i=0; i<[self.btns count]; i++) {
                              UIButton *btn = [self.btns objectAtIndex:i];
-                             btn.center = CGPointMake(coor.x + 10, -30);
+                             btn.center = CGPointMake(288, -30);
                          }
                      }
                      completion:^(BOOL finished){
@@ -312,10 +333,16 @@ static CGFloat PortraitCellHeight = 317;
                              [btn removeFromSuperview];
                          }
                      }
-    ];
-    self.tableView.userInteractionEnabled = YES;
+     ];
+    btnsShow = NO;
+    //self.tableView.allowsSelection = YES;
 }
-
+-(void)clearBtns{
+    for (UIButton* btn in self.btns) {
+        [btn removeFromSuperview];
+    }
+    btnsShow = NO;
+}
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -432,6 +459,7 @@ static CGFloat PortraitCellHeight = 317;
 
 #pragma mark - ImagePicker Delegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+
     //dispatch_queue_t handleImage = dispatch_queue_create("resize image and store", NULL);
     //dispatch_async(handleImage, ^{
         
@@ -471,6 +499,7 @@ static CGFloat PortraitCellHeight = 317;
     [super viewDidLoad];
     
 	// Do any additional setup after loading the view.
+  
     //setup modal
     self.datas = [NSMutableArray array];
     
@@ -482,7 +511,7 @@ static CGFloat PortraitCellHeight = 317;
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    [self.tableView.backgroundView addSubview:[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]]];
+    self.tableView.backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]];
     [self.view addSubview:self.tableView ];
     self.tableView.separatorColor = [UIColor clearColor];
     
@@ -491,7 +520,7 @@ static CGFloat PortraitCellHeight = 317;
     [button setBackgroundImage:[UIImage imageNamed:@"btn_back_pressed.png"]
                       forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(backPrev:) forControlEvents:UIControlEventTouchUpInside];
-    button.frame = CGRectMake(0, 0, 39, 39);
+    button.frame = CGRectMake(0, 0, 32, 32);
     self.backBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
     self.navigationItem.leftBarButtonItem = self.backBtn;
     self.navigationItem.hidesBackButton = YES;
@@ -502,11 +531,12 @@ static CGFloat PortraitCellHeight = 317;
     [addBtn setBackgroundImage:[UIImage imageNamed:@"btn_plus_pressed.png"]
                       forState:UIControlStateHighlighted];
     [addBtn addTarget:self action:@selector(addElementPressed:) forControlEvents:UIControlEventTouchUpInside];
-    addBtn.frame = CGRectMake(0, 0, 39, 39);
+    addBtn.frame = CGRectMake(0, 0, 32, 32);
     self.addElementBtn = [[UIBarButtonItem alloc] initWithCustomView:addBtn];
     self.navigationItem.rightBarButtonItem = self.addElementBtn;
     
-    //set add element btns
+    //add Gesture Recognizer
+    //[self.tableView.panGestureRecognizer addTarget:self action:@selector(addElementPressed:)];
 }
 
 - (void)viewDidUnload
@@ -521,12 +551,16 @@ static CGFloat PortraitCellHeight = 317;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+      [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.png"] forBarMetrics:UIBarMetricsDefault];
     //load data
     
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
     self.dataSourcePath = [[self.datas objectAtIndex:0] objectForKey:kCellPhotoKey];
+    if (btnsShow) {
+        [self clearBtns];
+    }
     //write data
     /*
     if([self.datas writeToFile:self.dataSourcePath atomically:YES] == NO){

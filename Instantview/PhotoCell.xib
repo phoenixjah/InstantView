@@ -51,7 +51,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<object class="NSCustomResource" key="IBUIImage">
 									<string key="NSClassName">NSImage</string>
-									<string key="NSResourceName">Photo.png</string>
+									<string key="NSResourceName">photo.png</string>
 								</object>
 							</object>
 							<object class="IBUIImageView" id="813653926">
@@ -72,12 +72,16 @@
 								<int key="NSvFlags">292</int>
 								<string key="NSFrame">{{21, 178}, {280, 63}}</string>
 								<reference key="NSSuperview" ref="972920626"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor" id="446566911">
 									<int key="NSColorSpace">3</int>
 									<bytes key="NSWhite">MCAwAA</bytes>
 								</object>
+								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
+								<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+								<int key="IBUIContentMode">4</int>
 								<bool key="IBUIMultipleTouchEnabled">YES</bool>
 								<int key="IBUITag">1</int>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -218,7 +222,7 @@
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
-			<string key="NS.key.0">Photo.png</string>
+			<string key="NS.key.0">photo.png</string>
 			<string key="NS.object.0">{320, 263}</string>
 		</object>
 		<string key="IBCocoaTouchPluginVersion">1498</string>

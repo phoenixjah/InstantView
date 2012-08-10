@@ -55,11 +55,10 @@
     self.tableView.separatorColor = [UIColor whiteColor];
     //put ADD function btn
     UIButton *addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    addNewPeopleBtn.frame = CGRectMake(10, 10, 80,80);
     [addNewPeopleBtn setImage:[UIImage imageNamed:@"btn_plus_normal.png"] forState:UIControlStateNormal];
     [addNewPeopleBtn setImage:[UIImage imageNamed:@"btn_normal_pressed.png"] forState:UIControlStateHighlighted];
     [addNewPeopleBtn addTarget:self action:@selector(addPeople:) forControlEvents:UIControlEventTouchDown];
-    addNewPeopleBtn.frame = CGRectMake(0, 0, 39, 39);
+    addNewPeopleBtn.frame = CGRectMake(0, 0, 32, 32);
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithCustomView:addNewPeopleBtn];
     self.navigationItem.rightBarButtonItem = addButton;
 }
@@ -75,12 +74,14 @@
 -(void)viewWillAppear:(BOOL)animated{
     [self.tableView reloadData];
     //layout navigation bar
-    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.png"] forBarMetrics:UIBarMetricsDefault];
+    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"list_nav.png"] forBarMetrics:UIBarMetricsDefault];
+    /*
     [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,
                                                                        [UIColor grayColor], UITextAttributeTextShadowColor,
                                                                        [NSValue valueWithUIOffset:UIOffsetMake(0, 0)], UITextAttributeTextShadowOffset,
                                                                        [UIFont systemFontOfSize:18.0], UITextAttributeFont, nil]];
-    //check if there is datas to show
+    */
+     //check if there is datas to show
 }
 #pragma mark - Device Orientation
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
