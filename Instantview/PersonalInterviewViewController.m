@@ -10,18 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <MessageUI/MessageUI.h>
 #import "UIImageView+ImagePackage.h"
-
-#define PHOTO_CELL @"PhotoCell"
-#define NOTE_CELL @"NoteCell"
-#define QUOTE_CELL @"QuoteCell"
-#define DEFAULT_NOTE_MESSAGE @"What's the insight?"
-#define DEFAULT_QUOTE_MESSAGE @"What did they say?"
-#define DEFAULT_PHOTO_MESSAGE @"What's the photo about?"
-
-#define PHOTO_TAG 3
-#define TEXT_TAG 1
-#define NAME_TAG 10
-#define BACKGROUND_TAG 2
+#import "Constant.h"
 
 @interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate>
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -34,16 +23,19 @@
 @implementation PersonalInterviewViewController
 @synthesize portraitCell,photoCell,noteCell,quoteCell;
 
-static NSString *kCellTypeKey = @"TypeOfCell";
-static NSString *kCellTextKey = @"ContentOfCell";
-static NSString *kCellPhotoKey = @"PhotoOfCell";
 static CGFloat PhotoCellHeight = 265;
 static CGFloat QuoteCellHeight = 130;
 static CGFloat NoteCellHeight = 173;
 static CGFloat PortraitCellHeight = 317;
 static BOOL btnsShow = NO;
 
-#pragma mark - Btn Setters Funcions
+#pragma mark - Setters Getters Funcions
+-(NSMutableArray*)datas{
+    if (_datas == nil) {
+        _datas = [NSMutableArray arrayWithContentsOfFile:self.dataSourcePath];
+    }
+    return _datas;
+}
 -(NSArray*)btns{
     
     if (_btns == nil) {
@@ -85,6 +77,7 @@ static BOOL btnsShow = NO;
     if (textField.tag == NAME_TAG) {
         self.title = textField.text;
         [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Name"];
+        
     }else if(textField.tag == BACKGROUND_TAG){
         [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Background"];
     }
@@ -400,9 +393,10 @@ static BOOL btnsShow = NO;
         //load image if it is nil
         NSString *fullPath = [[self.datas objectAtIndex:indexPath.row]objectForKey:kCellPhotoKey];
         //NSLog(@"photocell path %@",fullPath);
+        //myPhotoCell.image = [UIImage imageWithContentsOfFile:fullPath];
         if (fullPath == nil) {//new photoCell
             myPhotoCell.image = nil;
-        }else if (myPhotoCell.image == nil) {//reload image if it is release
+        }else{//reload image if it is release
             myPhotoCell.image = [UIImage imageWithContentsOfFile:fullPath];
         }
     }
@@ -410,7 +404,6 @@ static BOOL btnsShow = NO;
     if ([cell.reuseIdentifier isEqualToString:@"PortraitCell"]) {//portrait cell has more than one text
         UITextField *nameField = (UITextField*)[cell viewWithTag:NAME_TAG];
         nameField.text = [[self.datas objectAtIndex:0] objectForKey:@"Name"];
-        self.title = nameField.text;
         UITextField *backGround = (UITextField*)[cell viewWithTag:BACKGROUND_TAG];
         backGround.text = [[self.datas objectAtIndex:0] objectForKey:@"Background"];
     }else{//PhotoCell, NoteCell, QuoteCell just has one text input
@@ -470,16 +463,20 @@ static BOOL btnsShow = NO;
     
     image = [UIImageView imageWithImage:image scaledToSize:cellImage.frame.size];
     //store image to document
+    //dispatch_queue_t handleImage = dispatch_queue_create("resize image and store", NULL);
+    //dispatch_async(handleImage, ^{
+    
     NSData *imageData = UIImagePNGRepresentation(image); //convert image into .png format.
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
     NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
     NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_%d.png",self.view.tag,self.selectedRow]]; //add our image to the path
 
-    cellImage.image = image;
+    
         
     [[NSFileManager defaultManager] createFileAtPath:fullPath contents:imageData attributes:nil]; //finally save the path (image)
     //push the path at document to model
     [[self.datas objectAtIndex:self.selectedRow] setValue:fullPath forKey:kCellPhotoKey];
+    cellImage.image = image;
     /*
     [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:self.selectedRow 
                                                                                        inSection:0]]
@@ -499,12 +496,6 @@ static BOOL btnsShow = NO;
     [super viewDidLoad];
     
 	// Do any additional setup after loading the view.
-  
-    //setup modal
-    self.datas = [NSMutableArray array];
-    
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey,@"",@"Name",@"",@"Background", nil]];
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
     
     //setup subviews template
         
@@ -512,7 +503,7 @@ static BOOL btnsShow = NO;
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]];
-    [self.view addSubview:self.tableView ];
+    [self.view addSubview:self.tableView];
     self.tableView.separatorColor = [UIColor clearColor];
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -557,16 +548,17 @@ static BOOL btnsShow = NO;
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
-    self.dataSourcePath = [[self.datas objectAtIndex:0] objectForKey:kCellPhotoKey];
     if (btnsShow) {
         [self clearBtns];
     }
+    
     //write data
-    /*
     if([self.datas writeToFile:self.dataSourcePath atomically:YES] == NO){
-        NSLog(@"write to plist file error, path %@",self.dataSourcePath);
+        NSLog(@"in PersonalViewController write to plist file error, path %@",self.dataSourcePath);
+    }else{
+        self.datas = nil;
     }
-    */
+    
     //NSLog(@"self title %@",self.title);
 }
 

@@ -8,8 +8,9 @@
 
 #import "PeopleViewController.h"
 #import "PersonalInterviewViewController.h"
+#import "Constant.h"
 
-#define CELL_HEIGHT 140
+#define CELL_HEIGHT 147
 
 #define kViewControllerKey @"ViewController"
 #define kNameKey @"Name"
@@ -28,31 +29,48 @@
     //add pepople btn pressed
     //new a view controller
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
-    newPersonViewController.view.tag = [self.datas count];
-
     //push it into modal
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"New Interview",kNameKey,[UIImage imageNamed:@"default.png"],kImageKey, nil]];
+    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"New Interview",kNameKey,[UIImage imageNamed:@"list_default_image.png"],kImageKey, nil]];
+    newPersonViewController.view.tag = [self.datas count];
+    //create a data path for it
+    NSString *fileName = [NSString stringWithFormat:@"interview_%d.plist",[self.datas count]];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:fileName];
+    
+    //setup modal for new controller
+    NSMutableArray *newDatas = [NSMutableArray array];
+    
+    [newDatas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey,@"",@"Name",@"",@"Background", nil]];
+    [newDatas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
+    if ([newDatas writeToFile:filePath atomically:YES] == NO) {
+        NSLog(@"File Writing Error");
+    }else{
+        newPersonViewController.dataSourcePath = filePath;
+    }
     //go to next view controller
     [self.navigationController pushViewController:newPersonViewController animated:YES];
 }
 
 #pragma mark - Variable setter
 
+-(NSMutableArray*)datas{
+    if (_datas == nil) {
+        _datas = [NSMutableArray array];
+    }
+    return _datas;
+}
 #pragma mark - View Controller Life Cycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
-    //init data modal
-    self.datas = [NSMutableArray array];
-    
     //setup TableView
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.view = self.tableView;
-    self.tableView.separatorColor = [UIColor whiteColor];
+    self.tableView.separatorColor = [UIColor clearColor];
     //put ADD function btn
     UIButton *addNewPeopleBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [addNewPeopleBtn setImage:[UIImage imageNamed:@"btn_plus_normal.png"] forState:UIControlStateNormal];
@@ -75,12 +93,12 @@
     [self.tableView reloadData];
     //layout navigation bar
     [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"list_nav.png"] forBarMetrics:UIBarMetricsDefault];
-    /*
-    [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor blackColor], UITextAttributeTextColor,
-                                                                       [UIColor grayColor], UITextAttributeTextShadowColor,
+    
+    [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor grayColor], UITextAttributeTextColor,
+                                                                       [UIColor whiteColor], UITextAttributeTextShadowColor,
                                                                        [NSValue valueWithUIOffset:UIOffsetMake(0, 0)], UITextAttributeTextShadowOffset,
                                                                        [UIFont systemFontOfSize:18.0], UITextAttributeFont, nil]];
-    */
+    
      //check if there is datas to show
 }
 #pragma mark - Device Orientation
@@ -108,17 +126,24 @@
         self.peopleCell = nil;
     }
     UILabel *label;
-    label = (UILabel*)[cell viewWithTag:10];
+    label = (UILabel*)[cell viewWithTag:NAME_TAG];
     PersonalInterviewViewController *theController = (PersonalInterviewViewController*)[[self.datas objectAtIndex:indexPath.row] objectForKey:kViewControllerKey];
-    label.text = theController.title;
-    //NSLog(@"%@",theController.title);
+    if (theController.title == nil) {
+        label.text = DEFAULT_NAME_MESSAGE;
+    }else{
+        label.text = theController.title;
+    }//NSLog(@"%@",theController.title);
     
-    UIImageView *portrait = (UIImageView*) [cell viewWithTag:3];
-    if (theController.dataSourcePath != nil) {//have image to show
-        if (portrait.image == nil) {//cache being released
-            portrait.image = [UIImage imageWithContentsOfFile:theController.dataSourcePath];
-        }
+    UIImageView *portrait = (UIImageView*) [cell viewWithTag:PHOTO_TAG];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
+    NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
+    NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_0.png",theController.view.tag]]; //add our image to the path
+    if (fullPath != nil) {//have image to show
+            portrait.image = [UIImage imageWithContentsOfFile:fullPath];
+    }else{
+        portrait.image = [UIImage imageNamed:@"list_default_image.png"];
     }
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone ];
     return cell;
 }
 
