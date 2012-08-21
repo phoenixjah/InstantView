@@ -10,7 +10,8 @@
 #define Instantview_Constant_h
 
 //For PeopleViewController
-#define DEFAULT_NAME_MESSAGE @"Anonymous"
+#define DEFAULT_NAME_MESSAGE @"Untitled Interview"
+#define APP_FILENAME @"AllInterviews"
 //for PersonalViewController
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
@@ -27,4 +28,10 @@
 static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
 static NSString *kCellPhotoKey = @"PhotoOfCell";
+
+static const CGFloat pdfGapX = 290;
+static const CGFloat pdfGapY = 230;
+static const CGFloat pdfImageWidth = 280;
+static const CGFloat pdfImageHeight = 200;
+
 #endif

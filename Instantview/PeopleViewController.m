@@ -8,13 +8,15 @@
 
 #import "PeopleViewController.h"
 #import "PersonalInterviewViewController.h"
+#import <QuartzCore/QuartzCore.h>
 #import "Constant.h"
 
-#define CELL_HEIGHT 147
+#define CELL_HEIGHT 150
 
 #define kViewControllerKey @"ViewController"
 #define kNameKey @"Name"
 #define kImageKey @"Portrait"
+#define kPathKey @"DataPath"
 
 @interface PeopleViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -25,12 +27,10 @@
 @synthesize peopleCell;
 #pragma mark - Add Btn Function
 
--(void)addPeople:(id)sender{
-    //add pepople btn pressed
-    //new a view controller
+-(id)prepareForNewInterview{
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
     //push it into modal
-    [self.datas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:newPersonViewController,kViewControllerKey,@"New Interview",kNameKey,[UIImage imageNamed:@"list_default_image.png"],kImageKey, nil]];
+
     newPersonViewController.view.tag = [self.datas count];
     //create a data path for it
     NSString *fileName = [NSString stringWithFormat:@"interview_%d.plist",[self.datas count]];
@@ -47,6 +47,15 @@
     }else{
         newPersonViewController.dataSourcePath = filePath;
     }
+    [self.datas addObject:filePath];
+    return newPersonViewController;
+
+}
+-(void)addPeople:(id)sender{
+    //add pepople btn pressed
+    //new a view controller
+    PersonalInterviewViewController *newPersonViewController = [self prepareForNewInterview];
+
     //go to next view controller
     [self.navigationController pushViewController:newPersonViewController animated:YES];
 }
@@ -55,7 +64,20 @@
 
 -(NSMutableArray*)datas{
     if (_datas == nil) {
-        _datas = [NSMutableArray array];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
+        
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath] == YES) {
+            _datas = [NSMutableArray arrayWithContentsOfFile:filePath];
+        }else{
+            _datas = [NSMutableArray array];
+        }
+        
+        if ([_datas count] == 0) {//application is new to launch
+            if ([self prepareForNewInterview] == nil) {
+                NSLog(@"Fuck you error in init datas in PeopleViewController!!");
+            }
+        }
     }
     return _datas;
 }
@@ -89,6 +111,18 @@
     self.datas = nil;
 }
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    
+    //write data
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *filePath = [[paths objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
+    
+    if ([self.datas writeToFile:filePath atomically:YES]== NO) {
+        NSLog(@"in PeopleViewController file write error");
+    }
+}
+
 -(void)viewWillAppear:(BOOL)animated{
     [self.tableView reloadData];
     //layout navigation bar
@@ -97,7 +131,7 @@
     [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor grayColor], UITextAttributeTextColor,
                                                                        [UIColor whiteColor], UITextAttributeTextShadowColor,
                                                                        [NSValue valueWithUIOffset:UIOffsetMake(0, 0)], UITextAttributeTextShadowOffset,
-                                                                       [UIFont systemFontOfSize:18.0], UITextAttributeFont, nil]];
+                                                                       [UIFont systemFontOfSize:20.0], UITextAttributeFont, nil]];
     
      //check if there is datas to show
 }
@@ -126,24 +160,28 @@
         self.peopleCell = nil;
     }
     UILabel *label;
-    label = (UILabel*)[cell viewWithTag:NAME_TAG];
-    PersonalInterviewViewController *theController = (PersonalInterviewViewController*)[[self.datas objectAtIndex:indexPath.row] objectForKey:kViewControllerKey];
-    if (theController.title == nil) {
-        label.text = DEFAULT_NAME_MESSAGE;
-    }else{
-        label.text = theController.title;
-    }//NSLog(@"%@",theController.title);
+    NSArray *datasForCell = [NSArray arrayWithContentsOfFile:[self.datas objectAtIndex:indexPath.row]];
+    NSDictionary *dataForCell = [datasForCell objectAtIndex:0];
     
+    label = (UILabel*)[cell viewWithTag:NAME_TAG];
+    
+    label.text = [dataForCell objectForKey:@"Name"];
+        //NSLog(@"%@",theController.title);
+    if ([label.text length] == 0) {
+        label.text = DEFAULT_NAME_MESSAGE;
+    }
     UIImageView *portrait = (UIImageView*) [cell viewWithTag:PHOTO_TAG];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
-    NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
-    NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image%d_0.png",theController.view.tag]]; //add our image to the path
-    if (fullPath != nil) {//have image to show
-            portrait.image = [UIImage imageWithContentsOfFile:fullPath];
+
+    [portrait.layer setBorderWidth:1.0];
+    [portrait.layer setBorderColor:[UIColor lightGrayColor].CGColor];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[dataForCell objectForKey:kCellPhotoKey]]) {//have image to show
+            portrait.image = [UIImage imageWithContentsOfFile:[dataForCell objectForKey:kCellPhotoKey]];
     }else{
         portrait.image = [UIImage imageNamed:@"list_default_image.png"];
     }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone ];
+    datasForCell = nil;
+    dataForCell = nil;
     return cell;
 }
 
@@ -151,8 +189,9 @@
     return CELL_HEIGHT;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    PersonalInterviewViewController *nextController = [[self.datas objectAtIndex:indexPath.row] objectForKey:kViewControllerKey];
-    
+    PersonalInterviewViewController *nextController = [[PersonalInterviewViewController alloc] init];
+        nextController.dataSourcePath = (NSString*)[self.datas objectAtIndex:indexPath.row];
+    nextController.view.tag = indexPath.row;
     [self.navigationController pushViewController:nextController animated:YES];
 }
 @end

@@ -23,9 +23,9 @@
 @implementation PersonalInterviewViewController
 @synthesize portraitCell,photoCell,noteCell,quoteCell;
 
-static CGFloat PhotoCellHeight = 265;
-static CGFloat QuoteCellHeight = 130;
-static CGFloat NoteCellHeight = 173;
+static CGFloat PhotoCellHeight = 270;
+static CGFloat QuoteCellHeight = 135;
+static CGFloat NoteCellHeight = 175;
 static CGFloat PortraitCellHeight = 317;
 static BOOL btnsShow = NO;
 
@@ -75,7 +75,6 @@ static BOOL btnsShow = NO;
     [textField resignFirstResponder];
    
     if (textField.tag == NAME_TAG) {
-        self.title = textField.text;
         [[self.datas objectAtIndex:0] setObject:textField.text forKey:@"Name"];
         
     }else if(textField.tag == BACKGROUND_TAG){
@@ -146,7 +145,7 @@ static BOOL btnsShow = NO;
 #pragma mark - Share Result Btn Functions
 
 -(void)shareResultPressed:(id)sender{
-    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag+1];
+    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
@@ -158,7 +157,7 @@ static BOOL btnsShow = NO;
 -(void)sendMailWithAttach:(NSString*)filePath{
     MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
     mailer.mailComposeDelegate = self;
-    [mailer setSubject:[NSString stringWithFormat:@"Interview%d Result",self.view.tag+1]];
+    [mailer setSubject:[NSString stringWithFormat:@"Interview %@ Result",[[self.datas objectAtIndex:0]objectForKey:@"Name"]]];
     
     
     //ATTACH FILE
@@ -168,7 +167,7 @@ static BOOL btnsShow = NO;
         NSData *myData = [NSData dataWithContentsOfFile:filePath];
         
         [mailer addAttachmentData:myData mimeType:@"application/pdf"
-                         fileName:@"result.pdf"];
+                         fileName:[NSString stringWithFormat:@"%@.pdf",[[self.datas objectAtIndex:0]objectForKey:@"Name"]]];
         
     }
     
@@ -190,63 +189,85 @@ static BOOL btnsShow = NO;
     
 }
 #pragma mark - PDF Generating Function
--(void)drawText:(NSString*)textToDraw at:(CGRect)rectToDraw{
+-(void)drawText:(NSString*)textToDraw at:(CGRect)rectToDraw withFont:(UIFont*)font{
     
     [textToDraw drawInRect:rectToDraw
-                  withFont:[UIFont systemFontOfSize:16.0] 
+                  withFont:font
              lineBreakMode:UILineBreakModeWordWrap
+     alignment:UITextAlignmentCenter
      ];
     
 }
 
--(void)drawImage:(NSString*)pathForImage at:(CGRect)rectToDraw{
+-(CGFloat)drawImage:(NSString*)pathForImage at:(CGPoint)pointToDraw{
     UIImage *imageToDraw = [[UIImage alloc] initWithContentsOfFile:pathForImage];
-    [imageToDraw drawInRect:rectToDraw];
+    CGFloat ratio = imageToDraw.size.width/pdfImageWidth;
+    
+    [imageToDraw drawInRect:CGRectMake(pointToDraw.x,pointToDraw.y,pdfImageWidth,imageToDraw.size.height/ratio)];
+    return imageToDraw.size.height/ratio;
 }
 
 -(void)generatePDF:(NSString*)filePath{
     //draw pdf
     UIGraphicsBeginPDFContextToFile(filePath, CGRectZero, nil);
-    CGSize pageSize = self.tableView.contentSize;
-
-    /*  
-    BOOL done = NO;
-    do 
-    {
-        //Start a new page.
-        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
-        
-        //Draw text fo our header.
-        //[self drawHeader];
-        
-        //Draw an image
-        [resultingImage drawInRect:CGRectMake( (pageSize.width - resultingImage.size.width/2)/2, 350, resultingImage.size.width/2, resultingImage.size.height/2)];
-        done = YES;
-    } 
-    while (!done);
-    */
+    CGSize pageSize = CGSizeMake(612, 792);//A4 size?
     
     UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
     NSString *cellType;
     
-    CGFloat beginY = 0.0;
-    for (NSDictionary *eachCell in self.datas) {
+    CGFloat beginY = 10.0,beginX = 10.0,photoHeight;
+    NSInteger i;
+    NSDictionary *eachCell;
+    
+    //portrait cell template is special
+    eachCell = [self.datas objectAtIndex:0];//take out the portrait cell
+    photoHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX, beginY)];
+    beginX = beginX + pdfImageWidth;
+    beginY = pdfGapY/2;
+    [self drawText:[eachCell objectForKey:@"Name"] at:CGRectMake(beginX, beginY, 300, 48) withFont:[UIFont systemFontOfSize:24.0]];
+    beginY = beginY + 48;
+    [self drawText:[eachCell objectForKey:@"Background"] at:CGRectMake(beginX, beginY, 300, 67) withFont:[UIFont systemFontOfSize:18.0]];
+    beginY = beginY + 67;
+    
+    beginX = 10;
+    beginY = 10 + photoHeight;
+    
+    //draw the remains cell
+    for (i=1;i<[self.datas count];i++) {
+        eachCell = [self.datas objectAtIndex:i];
         cellType = [eachCell objectForKey:kCellTypeKey];
-
+        
+        //reset the drawing offset
+        if (beginX + pdfGapX > pageSize.width) {
+            beginX = 10;
+            beginY = beginY + pdfGapY;
+            if (beginY + pdfGapY > pageSize.height) {
+                UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
+                beginX = 10;
+                beginY = 10;
+                
+            }
+        }
+        
         if ([cellType isEqualToString:NOTE_CELL]) {
             //it's the text content
-            [[UIImage imageNamed:@"Note.png"] drawInRect:CGRectMake(20, beginY, 300, NoteCellHeight)];
-            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(20, beginY+NoteCellHeight/2, 300, NoteCellHeight)];
-            beginY = beginY + NoteCellHeight;
+            [[UIImage imageNamed:@"note.png"] drawInRect:CGRectMake(beginX, beginY, pdfGapX, NoteCellHeight*(pdfGapX/320))];
+            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(beginX + 20, beginY+32, 275, 115)withFont:[UIFont fontWithName:@"MarkerFelt-Thin" size:24.0]];
+            beginX = beginX + pdfGapX;
         }else if ([cellType isEqualToString:QUOTE_CELL]) {
-            [[UIImage imageNamed:@"Quote.png"] drawInRect:CGRectMake(20, beginY, 300, QuoteCellHeight)];
-            [self drawText:[NSString stringWithFormat:@"'%@'",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(38, beginY + QuoteCellHeight/2, 251, 63)];
-            beginY = beginY + QuoteCellHeight;
-        }else {
-                    //it's the image content
-                    [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGRectMake(20, beginY, 280, 200)];
-            beginY = beginY + PhotoCellHeight;
-                        }
+            [[UIImage imageNamed:@"quote.png"] drawInRect:CGRectMake(beginX, beginY, pdfGapX, QuoteCellHeight*(pdfGapX/320))];
+            [self drawText:[NSString stringWithFormat:@"%@",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(beginX + 30, beginY + 35, 251, 86)
+             withFont:[UIFont fontWithName:@"Kefa" size:20.0]];
+            beginX = beginX + pdfGapX;
+        }else if([cellType isEqualToString:PHOTO_CELL]){
+            //it's the image content
+            photoHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX, beginY)];
+        
+            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(beginX + 21, beginY + photoHeight, 280, 72) withFont:[UIFont systemFontOfSize:18.0]];
+            beginX = beginX + pdfGapX;
+            
+        }
+        
     }
     // Close the PDF context and write the contents out.
     UIGraphicsEndPDFContext();
@@ -277,7 +298,8 @@ static BOOL btnsShow = NO;
      ];
        
         btnsShow = YES;
-
+        //self.addElementBtn.customView.transform = CGAffineTransformMakeRotation(0.4);
+        //self.addElementBtn.customView.backgroundColor = [UIColor blackColor];
     }else if(btnsShow == YES){
         [self closeTheAddBtns];//and set btnsShow = NO
     }
@@ -314,7 +336,7 @@ static BOOL btnsShow = NO;
 
 -(void)closeTheAddBtns{
     __block NSInteger i;
-    [UIView animateWithDuration:0.5
+    [UIView animateWithDuration:0.3
                      animations:^{
                          for (i=0; i<[self.btns count]; i++) {
                              UIButton *btn = [self.btns objectAtIndex:i];
@@ -398,6 +420,8 @@ static BOOL btnsShow = NO;
             myPhotoCell.image = nil;
         }else{//reload image if it is release
             myPhotoCell.image = [UIImage imageWithContentsOfFile:fullPath];
+            [myPhotoCell.layer setBorderWidth:1.0];
+            [myPhotoCell.layer setBorderColor:[UIColor lightGrayColor].CGColor];
         }
     }
     //process cell's text content
@@ -499,7 +523,7 @@ static BOOL btnsShow = NO;
     
     //setup subviews template
         
-    self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -1, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]];
