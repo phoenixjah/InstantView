@@ -29,9 +29,16 @@ static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
 static NSString *kCellPhotoKey = @"PhotoOfCell";
 
-static const CGFloat pdfGapX = 290;
-static const CGFloat pdfGapY = 230;
-static const CGFloat pdfImageWidth = 280;
-static const CGFloat pdfImageHeight = 200;
-
+//PDF Constant
+static const CGFloat pdfSizeWidth = 612;
+static const CGFloat pdfSizeHeight = 792;
+static const CGFloat pdfGapX = 184;
+static const CGFloat pdfGapY = 5;
+static const CGFloat pdfImageWidth = 176;
+static const CGFloat pdfBorderMarginX = 20;
+static const CGFloat pdfBorderMarginY = 40;
+static const CGFloat pdfIndent = 4;
+static const CGFloat pdfHeaderLineWidth = 2;
+static const CGFloat pdfHeaderHeight = 75;
+static const CGFloat pdfPhotoBorderLine = 0.1;
 #endif

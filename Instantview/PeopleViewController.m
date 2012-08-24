@@ -13,7 +13,6 @@
 
 #define CELL_HEIGHT 150
 
-#define kViewControllerKey @"ViewController"
 #define kNameKey @"Name"
 #define kImageKey @"Portrait"
 #define kPathKey @"DataPath"
@@ -126,14 +125,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     [self.tableView reloadData];
     //layout navigation bar
-    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"list_nav.png"] forBarMetrics:UIBarMetricsDefault];
-    
-    [[self.navigationController navigationBar] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor grayColor], UITextAttributeTextColor,
-                                                                       [UIColor whiteColor], UITextAttributeTextShadowColor,
-                                                                       [NSValue valueWithUIOffset:UIOffsetMake(0, 0)], UITextAttributeTextShadowOffset,
-                                                                       [UIFont systemFontOfSize:20.0], UITextAttributeFont, nil]];
-    
-     //check if there is datas to show
+    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"list_nav.gif"] forBarMetrics:UIBarMetricsDefault];
 }
 #pragma mark - Device Orientation
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -177,7 +169,7 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath:[dataForCell objectForKey:kCellPhotoKey]]) {//have image to show
             portrait.image = [UIImage imageWithContentsOfFile:[dataForCell objectForKey:kCellPhotoKey]];
     }else{
-        portrait.image = [UIImage imageNamed:@"list_default_image.png"];
+        portrait.image = [UIImage imageNamed:@"list_default_image.gif"];
     }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone ];
     datasForCell = nil;

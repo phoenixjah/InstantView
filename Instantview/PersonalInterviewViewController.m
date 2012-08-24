@@ -17,7 +17,7 @@
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) NSArray *btns;
 @property (nonatomic,assign) NSInteger selectedRow;
-@property (nonatomic,strong) UIBarButtonItem *backBtn,*addElementBtn;
+@property (nonatomic,strong) UIBarButtonItem *backBtn,*addElementBtn,*closeBtn;
 @end
 
 @implementation PersonalInterviewViewController
@@ -157,7 +157,7 @@ static BOOL btnsShow = NO;
 -(void)sendMailWithAttach:(NSString*)filePath{
     MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
     mailer.mailComposeDelegate = self;
-    [mailer setSubject:[NSString stringWithFormat:@"Interview %@ Result",[[self.datas objectAtIndex:0]objectForKey:@"Name"]]];
+    [mailer setSubject:[NSString stringWithFormat:@"[FIELD REPORT] %@ Interview",[[self.datas objectAtIndex:0]objectForKey:@"Name"]]];
     
     
     //ATTACH FILE
@@ -172,7 +172,7 @@ static BOOL btnsShow = NO;
     }
     
     //CREATE EMAIL BODY TEXT
-    [mailer setMessageBody:@"Conducted at date:" isHTML:NO];
+    [mailer setMessageBody:@"Hi! I would like to share this interview I did on the field with you.\n\n\nSent from Phx's App" isHTML:NO];
     mailer.modalPresentationStyle = UIModalPresentationPageSheet;
     
     //PRESENT THE MAIL COMPOSITION INTERFACE
@@ -189,14 +189,20 @@ static BOOL btnsShow = NO;
     
 }
 #pragma mark - PDF Generating Function
--(void)drawText:(NSString*)textToDraw at:(CGRect)rectToDraw withFont:(UIFont*)font{
+- (CGFloat) drawBorder:(CGRect)rectSize//return the height of the border
+{
+    CGContextRef    currentContext = UIGraphicsGetCurrentContext();
+    UIColor *borderColor = [UIColor lightGrayColor];
     
-    [textToDraw drawInRect:rectToDraw
-                  withFont:font
-             lineBreakMode:UILineBreakModeWordWrap
-     alignment:UITextAlignmentCenter
-     ];
-    
+    CGContextSetStrokeColorWithColor(currentContext, borderColor.CGColor);
+    CGContextSetLineWidth(currentContext, pdfPhotoBorderLine);
+    CGContextStrokeRect(currentContext, rectSize);
+    //draw the shadow of the border
+    UIImage *shadowImage = [UIImage imageNamed:@"PDFshadow"];
+    shadowImage = [UIImageView imageWithImage:shadowImage scaledToSize:CGSizeMake(pdfGapX, shadowImage.size.height*(pdfGapX/320))];
+    [shadowImage drawAtPoint:CGPointMake(rectSize.origin.x, rectSize.origin.y + rectSize.size.height)];
+    shadowImage = nil;
+    return rectSize.size.height + pdfGapY;
 }
 
 -(CGFloat)drawImage:(NSString*)pathForImage at:(CGPoint)pointToDraw{
@@ -204,73 +210,142 @@ static BOOL btnsShow = NO;
     CGFloat ratio = imageToDraw.size.width/pdfImageWidth;
     
     [imageToDraw drawInRect:CGRectMake(pointToDraw.x,pointToDraw.y,pdfImageWidth,imageToDraw.size.height/ratio)];
-    return imageToDraw.size.height/ratio;
+    return imageToDraw.size.height/ratio;//return the height of the image
 }
 
+-(void)drawPageTitle:(NSString*)title{
+    CGFloat axiesY = pdfBorderMarginY;
+    CGSize textSize;
+    //draw line
+    CGContextRef    currentContext = UIGraphicsGetCurrentContext();
+    
+    CGContextSetLineWidth(currentContext, pdfHeaderLineWidth);
+    
+    CGContextSetStrokeColorWithColor(currentContext, [UIColor darkGrayColor].CGColor);
+    
+    CGPoint startPoint = CGPointMake(pdfBorderMarginX, pdfBorderMarginY);
+    CGPoint endPoint = CGPointMake(pdfSizeWidth - pdfBorderMarginX, pdfBorderMarginY);
+    
+    CGContextBeginPath(currentContext);
+    CGContextMoveToPoint(currentContext, startPoint.x, startPoint.y);
+    CGContextAddLineToPoint(currentContext, endPoint.x, endPoint.y);
+    
+    CGContextClosePath(currentContext);
+    CGContextDrawPath(currentContext, kCGPathFillStroke);
+    
+    axiesY = axiesY + 5.0;
+    //draw titles
+    //draw "INTERVIEW"
+    CGContextSetRGBFillColor(currentContext, 89.0/255.0, 89.0/255.0, 89.0/255.0, 1.0);
+    NSString *subtitle = @"FieldReport Interview";
+    UIFont *font = [UIFont fontWithName:@"Kefa" size:14.0];
+    textSize = [subtitle drawAtPoint:CGPointMake(pdfBorderMarginX + pdfIndent, axiesY) withFont:font];
+    //draw title,ex:NAME - BACKGROUND
+    axiesY = axiesY + textSize.height;
+    font = [UIFont boldSystemFontOfSize:24];
+    
+    textSize = [title drawInRect:CGRectMake(pdfBorderMarginX + pdfIndent, axiesY, pdfSizeWidth-2*(pdfIndent + pdfBorderMarginX), pdfHeaderHeight - textSize.height - pdfGapY)
+             withFont:font
+     ];
+
+    
+}
 -(void)generatePDF:(NSString*)filePath{
     //draw pdf
     UIGraphicsBeginPDFContextToFile(filePath, CGRectZero, nil);
-    CGSize pageSize = CGSizeMake(612, 792);//A4 size?
+    CGSize pageSize = CGSizeMake(pdfSizeWidth, pdfSizeHeight);//A4 size?
     
     UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
+    
     NSString *cellType;
     
-    CGFloat beginY = 10.0,beginX = 10.0,photoHeight;
+    CGFloat beginX, beginY, imageHeight;
     NSInteger i;
     NSDictionary *eachCell;
     
     //portrait cell template is special
     eachCell = [self.datas objectAtIndex:0];//take out the portrait cell
-    photoHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX, beginY)];
-    beginX = beginX + pdfImageWidth;
-    beginY = pdfGapY/2;
-    [self drawText:[eachCell objectForKey:@"Name"] at:CGRectMake(beginX, beginY, 300, 48) withFont:[UIFont systemFontOfSize:24.0]];
-    beginY = beginY + 48;
-    [self drawText:[eachCell objectForKey:@"Background"] at:CGRectMake(beginX, beginY, 300, 67) withFont:[UIFont systemFontOfSize:18.0]];
-    beginY = beginY + 67;
+    //draw header first
+    [self drawPageTitle:[NSString stringWithFormat:@"%@ - %@",[eachCell objectForKey:@"Name"],[eachCell objectForKey:@"Background"]]];
     
-    beginX = 10;
-    beginY = 10 + photoHeight;
+    beginX = pdfBorderMarginX + pdfIndent;
+    beginY = pdfBorderMarginY + pdfHeaderHeight + pdfGapY;
+    
+    imageHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX + pdfIndent, beginY+pdfIndent)];
+    //draw Name of the profile
+    imageHeight = imageHeight + pdfIndent + [(NSString*)[eachCell objectForKey:@"Name"] drawAtPoint:CGPointMake(beginX + pdfIndent + 2, beginY + imageHeight + pdfIndent) withFont:[UIFont boldSystemFontOfSize:21.0]].height;
+    //draw border for the image
+    beginY = beginY + [self drawBorder:CGRectMake(beginX, beginY, pdfGapX, imageHeight + pdfGapY)];
+    beginY = beginY + pdfGapY;
     
     //draw the remains cell
+    UIImage *noteImage = [UIImage imageNamed:@"note.png"];
+    noteImage = [UIImageView imageWithImage:noteImage scaledToSize:CGSizeMake(pdfGapX, noteImage.size.height*(pdfGapX/320))];
+    UIImage *quoteImage = [UIImage imageNamed:@"quote.png"];
+    quoteImage = [UIImageView imageWithImage:quoteImage scaledToSize:CGSizeMake(pdfGapX,quoteImage.size.height*(pdfGapX/320))];
+    CGFloat threashould;
+    
     for (i=1;i<[self.datas count];i++) {
         eachCell = [self.datas objectAtIndex:i];
         cellType = [eachCell objectForKey:kCellTypeKey];
         
+        if ([cellType isEqualToString:PHOTO_CELL]) {
+            threashould = PhotoCellHeight;
+        }else{
+            threashould = noteImage.size.height;
+        }
         //reset the drawing offset
-        if (beginX + pdfGapX > pageSize.width) {
-            beginX = 10;
-            beginY = beginY + pdfGapY;
-            if (beginY + pdfGapY > pageSize.height) {
+        if (beginY + threashould > pageSize.height - pdfBorderMarginY/2) {//change to next column
+            beginY = pdfBorderMarginY + pdfHeaderHeight + pdfGapY;
+            beginX = beginX + pdfGapX + pdfIndent*3;
+            if (beginX > pageSize.width) {//excceed the page, create the new page
                 UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
-                beginX = 10;
-                beginY = 10;
+                beginX = pdfBorderMarginX;
+                beginY = pdfBorderMarginY + pdfHeaderHeight + pdfGapY;
                 
             }
         }
         
         if ([cellType isEqualToString:NOTE_CELL]) {
             //it's the text content
-            [[UIImage imageNamed:@"note.png"] drawInRect:CGRectMake(beginX, beginY, pdfGapX, NoteCellHeight*(pdfGapX/320))];
-            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(beginX + 20, beginY+32, 275, 115)withFont:[UIFont fontWithName:@"MarkerFelt-Thin" size:24.0]];
-            beginX = beginX + pdfGapX;
+            [noteImage drawAtPoint:CGPointMake(beginX, beginY)];
+            [(NSString*)[eachCell objectForKey:kCellTextKey] drawInRect:CGRectMake(beginX + 10, beginY+16, noteImage.size.width - 20, noteImage.size.height - 2*pdfIndent)
+                                                               withFont:[UIFont fontWithName:@"MarkerFelt-Thin" size:13.0]
+                                                          lineBreakMode:UILineBreakModeWordWrap
+                                                              alignment:UITextAlignmentCenter];
+            
+            beginY = beginY + noteImage.size.height + pdfGapY;
+            
         }else if ([cellType isEqualToString:QUOTE_CELL]) {
-            [[UIImage imageNamed:@"quote.png"] drawInRect:CGRectMake(beginX, beginY, pdfGapX, QuoteCellHeight*(pdfGapX/320))];
-            [self drawText:[NSString stringWithFormat:@"%@",[eachCell objectForKey:kCellTextKey]] at:CGRectMake(beginX + 30, beginY + 35, 251, 86)
-             withFont:[UIFont fontWithName:@"Kefa" size:20.0]];
-            beginX = beginX + pdfGapX;
+            [quoteImage drawAtPoint:CGPointMake(beginX, beginY)];
+            [(NSString*)[eachCell objectForKey:kCellTextKey] drawInRect:CGRectMake(beginX + 10, beginY + 18, quoteImage.size.width - 20, quoteImage.size.height - 2*pdfIndent)
+
+                                                               withFont:[UIFont fontWithName:@"Kefa" size:11.0]
+                                                          lineBreakMode:UILineBreakModeWordWrap
+                                                              alignment:UITextAlignmentCenter
+             ];
+            beginY = beginY + quoteImage.size.height + pdfGapY;
+            
         }else if([cellType isEqualToString:PHOTO_CELL]){
             //it's the image content
-            photoHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX, beginY)];
+            imageHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX + pdfIndent, beginY + pdfIndent)];
         
-            [self drawText:[eachCell objectForKey:kCellTextKey] at:CGRectMake(beginX + 21, beginY + photoHeight, 280, 72) withFont:[UIFont systemFontOfSize:18.0]];
-            beginX = beginX + pdfGapX;
+            [(NSString*)[eachCell objectForKey:kCellTextKey] drawInRect:CGRectMake(beginX + 10, beginY + imageHeight + pdfIndent + 3, pdfImageWidth, 30)
+                                                               withFont:[UIFont systemFontOfSize:10.0]
+                                                          lineBreakMode:UILineBreakModeWordWrap
+                                                              alignment:UITextAlignmentCenter
+             ];
+            imageHeight = imageHeight + 30;
+            beginY = beginY + [self drawBorder:CGRectMake(beginX, beginY, pdfGapX, imageHeight + pdfGapY)];
             
+            beginY = beginY + pdfGapY;
         }
         
     }
     // Close the PDF context and write the contents out.
     UIGraphicsEndPDFContext();
+    noteImage = nil;
+    quoteImage = nil;
 }
 #pragma mark - Add Element Btn Functions
 
@@ -293,15 +368,16 @@ static BOOL btnsShow = NO;
                              UIButton *btn = [self.btns objectAtIndex:i];
                              [self.view addSubview:btn];
                              btn.center = CGPointMake(288, 30+i*55);
-    }
+                         }
                      }
      ];
-       
         btnsShow = YES;
-        //self.addElementBtn.customView.transform = CGAffineTransformMakeRotation(0.4);
+        [self.navigationItem setRightBarButtonItem:self.closeBtn animated:YES];
+        //self.addElementBtn.customView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, 0.2);
         //self.addElementBtn.customView.backgroundColor = [UIColor blackColor];
     }else if(btnsShow == YES){
-        [self closeTheAddBtns];//and set btnsShow = NO
+        //[self closeTheAddBtns];//and set btnsShow = NO
+        // self.addElementBtn.customView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, 0.0);
     }
 }
 
@@ -350,6 +426,7 @@ static BOOL btnsShow = NO;
                      }
      ];
     btnsShow = NO;
+    [self.navigationItem setRightBarButtonItem:self.addElementBtn animated:YES];
     //self.tableView.allowsSelection = YES;
 }
 -(void)clearBtns{
@@ -357,6 +434,7 @@ static BOOL btnsShow = NO;
         [btn removeFromSuperview];
     }
     btnsShow = NO;
+    [self.navigationItem setRightBarButtonItem:self.addElementBtn animated:YES];
 }
 #pragma mark - UITableView Delegate
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -534,6 +612,7 @@ static BOOL btnsShow = NO;
     [button setBackgroundImage:[UIImage imageNamed:@"btn_back_normal.png"] forState:UIControlStateNormal];
     [button setBackgroundImage:[UIImage imageNamed:@"btn_back_pressed.png"]
                       forState:UIControlStateHighlighted];
+    
     [button addTarget:self action:@selector(backPrev:) forControlEvents:UIControlEventTouchUpInside];
     button.frame = CGRectMake(0, 0, 32, 32);
     self.backBtn = [[UIBarButtonItem alloc] initWithCustomView:button];
@@ -550,6 +629,15 @@ static BOOL btnsShow = NO;
     self.addElementBtn = [[UIBarButtonItem alloc] initWithCustomView:addBtn];
     self.navigationItem.rightBarButtonItem = self.addElementBtn;
     
+    //init close btn
+    UIButton *closeAddBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [closeAddBtn setBackgroundImage:[UIImage imageNamed:@"btn_close_normal.png"] forState:UIControlStateNormal];
+    [closeAddBtn setBackgroundImage:[UIImage imageNamed:@"btn_close_pressed.png"]
+                      forState:UIControlStateHighlighted];
+    [closeAddBtn addTarget:self action:@selector(closeTheAddBtns) forControlEvents:UIControlEventTouchUpInside];
+    closeAddBtn.frame = CGRectMake(0, 0, 32, 32);
+    self.closeBtn = [[UIBarButtonItem alloc] initWithCustomView:closeAddBtn];
+    
     //add Gesture Recognizer
     //[self.tableView.panGestureRecognizer addTarget:self action:@selector(addElementPressed:)];
 }
@@ -563,10 +651,11 @@ static BOOL btnsShow = NO;
     self.btns = nil;
     self.backBtn = nil;
     self.addElementBtn = nil;
+    self.closeBtn = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-      [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.png"] forBarMetrics:UIBarMetricsDefault];
+      [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.gif"] forBarMetrics:UIBarMetricsDefault];
     //load data
     
 }
