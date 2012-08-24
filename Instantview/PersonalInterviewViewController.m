@@ -655,7 +655,7 @@ static BOOL btnsShow = NO;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-      [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.gif"] forBarMetrics:UIBarMetricsDefault];
+      //[[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.gif"] forBarMetrics:UIBarMetricsDefault];
     //load data
     
 }

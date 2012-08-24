@@ -125,7 +125,7 @@
 -(void)viewWillAppear:(BOOL)animated{
     [self.tableView reloadData];
     //layout navigation bar
-    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"list_nav.gif"] forBarMetrics:UIBarMetricsDefault];
+    [[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.gif"] forBarMetrics:UIBarMetricsDefault];
 }
 #pragma mark - Device Orientation
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
