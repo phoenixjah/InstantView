@@ -172,7 +172,7 @@ static BOOL btnsShow = NO;
     }
     
     //CREATE EMAIL BODY TEXT
-    [mailer setMessageBody:@"Hi! I would like to share this interview I did on the field with you.\n\n\nSent from Phx's App" isHTML:NO];
+    [mailer setMessageBody:@"Hi! I would like to share this interview I did on the field with you.\n\n\nSent from FieldReport App" isHTML:NO];
     mailer.modalPresentationStyle = UIModalPresentationPageSheet;
     
     //PRESENT THE MAIL COMPOSITION INTERFACE
@@ -210,6 +210,15 @@ static BOOL btnsShow = NO;
     CGFloat ratio = imageToDraw.size.width/pdfImageWidth;
     
     [imageToDraw drawInRect:CGRectMake(pointToDraw.x,pointToDraw.y,pdfImageWidth,imageToDraw.size.height/ratio)];
+    
+    //draw frame for photo
+    CGContextRef    currentContext = UIGraphicsGetCurrentContext();
+    UIColor *borderColor = [UIColor lightGrayColor];
+    
+    
+    CGContextSetStrokeColorWithColor(currentContext, borderColor.CGColor);
+    CGContextSetLineWidth(currentContext, 0.05);
+    CGContextStrokeRect(currentContext, CGRectMake(pointToDraw.x-0.1,pointToDraw.y-0.1,pdfImageWidth + 0.1,imageToDraw.size.height/ratio+0.1));
     return imageToDraw.size.height/ratio;//return the height of the image
 }
 
@@ -242,12 +251,23 @@ static BOOL btnsShow = NO;
     textSize = [subtitle drawAtPoint:CGPointMake(pdfBorderMarginX + pdfIndent, axiesY) withFont:font];
     //draw title,ex:NAME - BACKGROUND
     axiesY = axiesY + textSize.height;
-    font = [UIFont boldSystemFontOfSize:24];
+    font = [UIFont boldSystemFontOfSize:21];
+    /*
+    CGFloat fontSize;
     
-    textSize = [title drawInRect:CGRectMake(pdfBorderMarginX + pdfIndent, axiesY, pdfSizeWidth-2*(pdfIndent + pdfBorderMarginX), pdfHeaderHeight - textSize.height - pdfGapY)
-             withFont:font
+    [title drawAtPoint:CGPointMake(pdfBorderMarginX + pdfIndent, axiesY)
+              forWidth:pdfSizeWidth - 2*(pdfIndent + pdfBorderMarginX)
+              withFont:font
+           minFontSize:20.0
+        actualFontSize:&fontSize
+         lineBreakMode:UILineBreakModeTailTruncation
+    baselineAdjustment:UIBaselineAdjustmentNone
      ];
-
+    NSLog(@"%f",fontSize);*/
+    
+    textSize = [title drawInRect:CGRectMake(pdfBorderMarginX + pdfIndent, axiesY, pdfSizeWidth-2*(pdfIndent + pdfBorderMarginX), pdfHeaderHeight - textSize.height - pdfGapY*2)
+             withFont:font lineBreakMode:UILineBreakModeTailTruncation
+     ];
     
 }
 -(void)generatePDF:(NSString*)filePath{
@@ -273,7 +293,14 @@ static BOOL btnsShow = NO;
     
     imageHeight = [self drawImage:[eachCell objectForKey:kCellPhotoKey] at:CGPointMake(beginX + pdfIndent, beginY+pdfIndent)];
     //draw Name of the profile
-    imageHeight = imageHeight + pdfIndent + [(NSString*)[eachCell objectForKey:@"Name"] drawAtPoint:CGPointMake(beginX + pdfIndent + 2, beginY + imageHeight + pdfIndent) withFont:[UIFont boldSystemFontOfSize:21.0]].height;
+    imageHeight = imageHeight + pdfIndent + [(NSString*)[eachCell objectForKey:@"Name"] drawAtPoint:CGPointMake(beginX + pdfIndent + 2, beginY + imageHeight + pdfIndent)
+                                                                                           forWidth:pdfImageWidth - pdfIndent
+                                                                                           withFont:[UIFont boldSystemFontOfSize:21.0]
+                                                                                        minFontSize:13
+                                                                                     actualFontSize:nil
+                                                                                      lineBreakMode:UILineBreakModeTailTruncation
+                                                                                 baselineAdjustment:UIBaselineAdjustmentNone
+                                             ].height;
     //draw border for the image
     beginY = beginY + [self drawBorder:CGRectMake(beginX, beginY, pdfGapX, imageHeight + pdfGapY)];
     beginY = beginY + pdfGapY;
@@ -298,8 +325,10 @@ static BOOL btnsShow = NO;
         if (beginY + threashould > pageSize.height - pdfBorderMarginY/2) {//change to next column
             beginY = pdfBorderMarginY + pdfHeaderHeight + pdfGapY;
             beginX = beginX + pdfGapX + pdfIndent*3;
-            if (beginX > pageSize.width) {//excceed the page, create the new page
+            if (beginX + pdfGapX >= pageSize.width) {//excceed the page, create the new page
                 UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, pageSize.width, pageSize.height), nil);
+                CGContextRef    currentContext = UIGraphicsGetCurrentContext();
+                CGContextSetRGBFillColor(currentContext, 89.0/255.0, 89.0/255.0, 89.0/255.0, 1.0);
                 beginX = pdfBorderMarginX;
                 beginY = pdfBorderMarginY + pdfHeaderHeight + pdfGapY;
                 
@@ -604,7 +633,7 @@ static BOOL btnsShow = NO;
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -1, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.tableView.backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.jpg"]];
+    self.tableView.backgroundView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"background.png"]];
     [self.view addSubview:self.tableView];
     self.tableView.separatorColor = [UIColor clearColor];
     
