@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
 
 @interface PeopleViewController : UIViewController
 @property (nonatomic,assign) IBOutlet UITableViewCell *peopleCell;

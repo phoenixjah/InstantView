@@ -11,7 +11,7 @@
 
 //For PeopleViewController
 #define DEFAULT_NAME_MESSAGE @"Untitled Interview"
-#define APP_FILENAME @"AllInterviews"
+#define APP_FILENAME @"AllInterviews.plist"
 //for PersonalViewController
 #define PHOTO_CELL @"PhotoCell"
 #define NOTE_CELL @"NoteCell"
@@ -29,6 +29,10 @@ static NSString *kCellTypeKey = @"TypeOfCell";
 static NSString *kCellTextKey = @"ContentOfCell";
 static NSString *kCellPhotoKey = @"PhotoOfCell";
 
+static CGFloat PhotoCellHeight = 270;
+static CGFloat QuoteCellHeight = 135;
+static CGFloat NoteCellHeight = 175;
+static CGFloat PortraitCellHeight = 317;
 //PDF Constant
 static const CGFloat pdfSizeWidth = 612;
 static const CGFloat pdfSizeHeight = 792;

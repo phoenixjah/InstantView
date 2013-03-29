@@ -7,12 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PDFGenerateViewController.h"
 
-@interface PersonalInterviewViewController : UIViewController
+@protocol ProfileUpdateDelegate
+-(void)updatedProfile:(NSDictionary*)data atIndex:(NSInteger)index;
+@end
 
+@interface PersonalInterviewViewController : PDFGenerateViewController
+
+@property (nonatomic,assign) id <ProfileUpdateDelegate> delegate;
 @property (nonatomic,assign) IBOutlet UITableViewCell *portraitCell;
 @property (nonatomic,assign) IBOutlet UITableViewCell *photoCell;
 @property (nonatomic,assign) IBOutlet UITableViewCell *noteCell;
 @property (nonatomic,assign) IBOutlet UITableViewCell *quoteCell;
 @property (nonatomic,strong) NSString *dataSourcePath;
+
 @end
