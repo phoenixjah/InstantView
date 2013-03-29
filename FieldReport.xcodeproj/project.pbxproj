@@ -22,6 +22,10 @@
 		B333577B15BA7B9100522B08 /* PersonListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B333577A15BA7B9100522B08 /* PersonListCell.xib */; };
 		B34E5AF115E6480C002A3E5B /* list_default_image.gif in Resources */ = {isa = PBXBuildFile; fileRef = B34E5AF015E6480B002A3E5B /* list_default_image.gif */; };
 		B34E762115C4319D00ECB2D7 /* QuoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B34E762015C4319D00ECB2D7 /* QuoteCell.xib */; };
+		B351DD9716F5BBD100774FEA /* Quote.m in Sources */ = {isa = PBXBuildFile; fileRef = B351DD9616F5BBD100774FEA /* Quote.m */; };
+		B351DD9A16F5BBD100774FEA /* Note.m in Sources */ = {isa = PBXBuildFile; fileRef = B351DD9916F5BBD100774FEA /* Note.m */; };
+		B351DD9D16F5BBD100774FEA /* Photo.m in Sources */ = {isa = PBXBuildFile; fileRef = B351DD9C16F5BBD100774FEA /* Photo.m */; };
+		B351DDAB16F5D89A00774FEA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B351DDAA16F5D89A00774FEA /* CoreData.framework */; };
 		B37C6F9F15E4AFCF0045CCE0 /* PDFshadow.png in Resources */ = {isa = PBXBuildFile; fileRef = B37C6F9E15E4AFCF0045CCE0 /* PDFshadow.png */; };
 		B3A0D75715CA455B000CFE24 /* UIImageView+ImagePackage.m in Sources */ = {isa = PBXBuildFile; fileRef = B3A0D75615CA455B000CFE24 /* UIImageView+ImagePackage.m */; };
 		B3BB582D15D4BD07003A70CA /* btn_plus_normal.png in Resources */ = {isa = PBXBuildFile; fileRef = B3BB581E15D4BD07003A70CA /* btn_plus_normal.png */; };
@@ -49,6 +53,8 @@
 		B3EC365515DA2D7E00200FEB /* add_quote.png in Resources */ = {isa = PBXBuildFile; fileRef = B3EC365115DA2D7E00200FEB /* add_quote.png */; };
 		B3F2840815BB04240016BB94 /* PortraitCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F2840715BB04240016BB94 /* PortraitCell.xib */; };
 		B3F40B5B15C2942B0005B212 /* NoteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F40B5A15C2942B0005B212 /* NoteCell.xib */; };
+		B3FB4BC917017EE400F5503E /* PDFGenerateViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FB4BC817017EE400F5503E /* PDFGenerateViewController.m */; };
+		B3FB4BCC1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FB4BCB1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +74,13 @@
 		B333577A15BA7B9100522B08 /* PersonListCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonListCell.xib; sourceTree = "<group>"; };
 		B34E5AF015E6480B002A3E5B /* list_default_image.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = list_default_image.gif; sourceTree = "<group>"; };
 		B34E762015C4319D00ECB2D7 /* QuoteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = QuoteCell.xib; sourceTree = "<group>"; };
+		B351DD9516F5BBD100774FEA /* Quote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quote.h; sourceTree = "<group>"; };
+		B351DD9616F5BBD100774FEA /* Quote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Quote.m; sourceTree = "<group>"; };
+		B351DD9816F5BBD100774FEA /* Note.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Note.h; sourceTree = "<group>"; };
+		B351DD9916F5BBD100774FEA /* Note.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Note.m; sourceTree = "<group>"; };
+		B351DD9B16F5BBD100774FEA /* Photo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Photo.h; sourceTree = "<group>"; };
+		B351DD9C16F5BBD100774FEA /* Photo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Photo.m; sourceTree = "<group>"; };
+		B351DDAA16F5D89A00774FEA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		B37C6F9E15E4AFCF0045CCE0 /* PDFshadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PDFshadow.png; sourceTree = "<group>"; };
 		B3A0D75515CA455B000CFE24 /* UIImageView+ImagePackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+ImagePackage.h"; sourceTree = "<group>"; };
 		B3A0D75615CA455B000CFE24 /* UIImageView+ImagePackage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+ImagePackage.m"; sourceTree = "<group>"; };
@@ -102,6 +115,10 @@
 		B3EC365115DA2D7E00200FEB /* add_quote.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_quote.png; sourceTree = "<group>"; };
 		B3F2840715BB04240016BB94 /* PortraitCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PortraitCell.xib; sourceTree = "<group>"; };
 		B3F40B5A15C2942B0005B212 /* NoteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoteCell.xib; sourceTree = "<group>"; };
+		B3FB4BC717017EE400F5503E /* PDFGenerateViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFGenerateViewController.h; sourceTree = "<group>"; };
+		B3FB4BC817017EE400F5503E /* PDFGenerateViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFGenerateViewController.m; sourceTree = "<group>"; };
+		B3FB4BCA1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+CreateUniqueFilePath.h"; sourceTree = "<group>"; };
+		B3FB4BCB1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+CreateUniqueFilePath.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B351DDAB16F5D89A00774FEA /* CoreData.framework in Frameworks */,
 				B3BF928615BBDED0003BF245 /* MessageUI.framework in Frameworks */,
 				B3E5280515B939A700AA840B /* QuartzCore.framework in Frameworks */,
 				B3E527B815B796C100AA840B /* UIKit.framework in Frameworks */,
@@ -140,6 +158,7 @@
 		B3E527B615B796C100AA840B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B351DDAA16F5D89A00774FEA /* CoreData.framework */,
 				B3BF928515BBDED0003BF245 /* MessageUI.framework */,
 				B3E5280415B939A700AA840B /* QuartzCore.framework */,
 				B3E527B715B796C100AA840B /* UIKit.framework */,
@@ -152,6 +171,8 @@
 		B3E527BD15B796C100AA840B /* Instantview */ = {
 			isa = PBXGroup;
 			children = (
+				B3FB4BCA1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.h */,
+				B3FB4BCB1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.m */,
 				B3E527D715B799A400AA840B /* First Hierachy */,
 				B3E527D815B799B900AA840B /* Second Hierachy */,
 				B3E527C915B796C100AA840B /* MainStoryboard.storyboard */,
@@ -159,6 +180,12 @@
 				B3A0D75615CA455B000CFE24 /* UIImageView+ImagePackage.m */,
 				B3E527BE15B796C100AA840B /* Supporting Files */,
 				B30DB64F15D8D7FA007C69AD /* Constant.h */,
+				B351DD9B16F5BBD100774FEA /* Photo.h */,
+				B351DD9C16F5BBD100774FEA /* Photo.m */,
+				B351DD9816F5BBD100774FEA /* Note.h */,
+				B351DD9916F5BBD100774FEA /* Note.m */,
+				B351DD9516F5BBD100774FEA /* Quote.h */,
+				B351DD9616F5BBD100774FEA /* Quote.m */,
 			);
 			path = Instantview;
 			sourceTree = "<group>";
@@ -210,6 +237,8 @@
 				B3F2840715BB04240016BB94 /* PortraitCell.xib */,
 				B3E527D415B7999A00AA840B /* PersonalInterviewViewController.h */,
 				B3E527D515B7999A00AA840B /* PersonalInterviewViewController.m */,
+				B3FB4BC717017EE400F5503E /* PDFGenerateViewController.h */,
+				B3FB4BC817017EE400F5503E /* PDFGenerateViewController.m */,
 			);
 			name = SubViews;
 			sourceTree = "<group>";
@@ -267,7 +296,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = People;
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = B3E527AD15B796C100AA840B /* Build configuration list for PBXProject "FieldReport" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -338,6 +367,11 @@
 				B3E527CE15B796C100AA840B /* PeopleViewController.m in Sources */,
 				B3E527D615B7999A00AA840B /* PersonalInterviewViewController.m in Sources */,
 				B3A0D75715CA455B000CFE24 /* UIImageView+ImagePackage.m in Sources */,
+				B351DD9716F5BBD100774FEA /* Quote.m in Sources */,
+				B351DD9A16F5BBD100774FEA /* Note.m in Sources */,
+				B351DD9D16F5BBD100774FEA /* Photo.m in Sources */,
+				B3FB4BC917017EE400F5503E /* PDFGenerateViewController.m in Sources */,
+				B3FB4BCC1701860C00F5503E /* NSFileManager+CreateUniqueFilePath.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +403,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -394,6 +432,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
