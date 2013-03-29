@@ -30,12 +30,14 @@ static BOOL updateProfile = NO;
 #pragma mark - Setters Getters Funcions
 -(NSMutableArray*)datas{
     if (_datas == nil) {
-        if([[NSFileManager defaultManager] fileExistsAtPath:self.dataSourcePath] == NO){
+        if([[NSFileManager defaultManager] fileExistsAtPath:self.dataSourceDirPath] == NO){
             //create it
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.dataSourceDirPath withIntermediateDirectories:NO attributes:nil error:nil];
+            
             _datas = [NSMutableArray arrayWithObjects:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"PortraitCell",kCellTypeKey,DEFAULT_NAME_MESSAGE,@"Name",@"",@"Background", nil],[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil],nil];
         }else{
             //load it
-            _datas = [NSMutableArray arrayWithContentsOfFile:self.dataSourcePath];
+            _datas = [NSMutableArray arrayWithContentsOfFile:[self.dataSourceDirPath stringByAppendingPathComponent:INDIVIDUAL_FILE_NAME]] ;
         }
     }
 
@@ -151,10 +153,9 @@ static BOOL updateProfile = NO;
 #pragma mark - Share Result Btn Functions
 
 -(void)shareResultPressed:(id)sender{
-    NSString *fileName = [NSString stringWithFormat:@"result_%d.pdf",self.view.tag];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *pdfFileName = [documentsDirectory stringByAppendingPathComponent:fileName];
+    NSString *fileName = [NSString stringWithFormat:@"result.pdf"];
+
+    NSString *pdfFileName = [self.dataSourceDirPath stringByAppendingPathComponent:fileName];
     //write a pdf
     [self generatePDFat:pdfFileName fromDatas:self.datas];
     //send it through email
@@ -421,8 +422,8 @@ static BOOL updateProfile = NO;
     //dispatch_async(handleImage, ^{
     
     NSData *imageData = UIImagePNGRepresentation(image); //convert image into .png format.
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES); //create an array and store result of our search for the documents directory in it
-    NSString *documentsDirectory = [paths objectAtIndex:0]; //create NSString object, that holds our exact path to the documents directory
+
+    NSString *documentsDirectory = self.dataSourceDirPath;
     NSString *fullPath;
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:[[self.datas objectAtIndex:self.selectedRow] objectForKey:kCellPhotoKey]]) {
@@ -430,7 +431,7 @@ static BOOL updateProfile = NO;
         fullPath = [[self.datas objectAtIndex:self.selectedRow] objectForKey:kCellPhotoKey];
     }else{
         //create the new path for it
-        fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image_%@.png",[NSFileManager createUniqueFilePath]]]; //add our image to the path
+        fullPath = [documentsDirectory stringByAppendingPathComponent:[NSString stringWithFormat:@"image_%@.png",[NSFileManager createUniqueFileName]]]; //add our image to the path
     }
     
         
@@ -454,7 +455,7 @@ static BOOL updateProfile = NO;
 } 
 -(void)backPrev:(id)sender{
     if (updateProfile) {
-            NSDictionary *newProfile = [NSDictionary dictionaryWithObjectsAndKeys:[[self.datas objectAtIndex:0] objectForKey:@"Name"],@"Name",[[self.datas objectAtIndex:0] objectForKey:kCellPhotoKey],@"Portrait",self.dataSourcePath,@"DataPath", nil];
+            NSDictionary *newProfile = [NSDictionary dictionaryWithObjectsAndKeys:[[self.datas objectAtIndex:0] objectForKey:@"Name"],@"Name",[[self.datas objectAtIndex:0] objectForKey:kCellPhotoKey],@"Portrait",self.dataSourceDirPath,@"DirPath", nil];
   
             //NSLog(@"self.view.tag = %d",self.view.tag);
            [self.delegate updatedProfile:newProfile atIndex:self.view.tag];
@@ -539,7 +540,7 @@ static BOOL updateProfile = NO;
     }
     
     //write data
-    if([self.datas writeToFile:self.dataSourcePath atomically:YES] == NO){
+    if([self.datas writeToFile:[self.dataSourceDirPath stringByAppendingPathComponent:INDIVIDUAL_FILE_NAME] atomically:YES] == NO){
         NSLog(@"second layer writing file error");
     }
     //NSLog(@"self title %@",self.title);

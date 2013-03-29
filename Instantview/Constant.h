@@ -20,6 +20,8 @@
 #define DEFAULT_QUOTE_MESSAGE @"What did they say?"
 #define DEFAULT_PHOTO_MESSAGE @"What's the photo about?"
 
+#define INDIVIDUAL_FILE_NAME @"AllDatas.plist"
+
 #define PHOTO_TAG 3
 #define TEXT_TAG 1
 #define NAME_TAG 10

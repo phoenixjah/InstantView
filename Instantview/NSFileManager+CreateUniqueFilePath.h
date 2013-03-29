@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @interface NSFileManager (CreateUniqueFilePath)
-+(NSString*)createUniqueFilePath;
++(NSString*)createUniqueFileName;
++(BOOL)deleteImagesFromPlist:(NSString*)path;
 @end

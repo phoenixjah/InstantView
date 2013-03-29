@@ -9,15 +9,20 @@
 #import "NSFileManager+CreateUniqueFilePath.h"
 
 @implementation NSFileManager (CreateUniqueFilePath)
-+(NSString*)createUniqueFilePath{
++(NSString*)createUniqueFileName{
     CFUUIDRef newUniqueId = CFUUIDCreate(kCFAllocatorDefault);
     CFStringRef newUniqueIdString = CFUUIDCreateString(kCFAllocatorDefault, newUniqueId);
     
-    NSString* newUniquePath = [NSString stringWithFormat:@"%@",newUniqueIdString];
+    NSString* newUniqueName = [NSString stringWithFormat:@"%@",newUniqueIdString];
     //NSLog(@"new str = %@",newUniquePath);
     CFRelease(newUniqueId);
     CFRelease(newUniqueIdString);
     //NSLog(@"new str after release %@",newUniquePath);
-    return newUniquePath;
+    return newUniqueName;
+}
+
++(BOOL)deleteImagesFromPlist:(NSString *)path{
+    
+    return YES;
 }
 @end

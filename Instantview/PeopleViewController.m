@@ -16,7 +16,7 @@
 
 #define kNameKey @"Name"
 #define kImageKey @"Portrait"
-#define kPathKey @"DataPath"
+#define kPathKey @"DirPath"
 
 @interface PeopleViewController ()<UITableViewDelegate,UITableViewDataSource,ProfileUpdateDelegate>
 @property (nonatomic,strong) NSMutableArray *datas;
@@ -36,8 +36,10 @@
             //file does not exist, setup default data
             //create unique filename
             
-            NSString *newPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSFileManager createUniqueFilePath]];
-            newPath = [newPath stringByAppendingPathExtension: @"plist"];
+            NSString *uniqueName = [NSFileManager createUniqueFileName];
+            NSString *newPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:uniqueName];
+            
+            //newPath = [newPath stringByAppendingPathExtension: @"plist"];
             
             NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:DEFAULT_NAME_MESSAGE,kNameKey,newPath,kPathKey, nil];
             _datas = [NSMutableArray arrayWithObject:data];
@@ -69,8 +71,8 @@
     //create a data path for new view controller
     //create unique filename
 
-    NSString *newPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSFileManager createUniqueFilePath]];
-    newPath = [newPath stringByAppendingPathExtension: @"plist"];
+    NSString *newPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:[NSFileManager createUniqueFileName]];
+    //newPath = [newPath stringByAppendingPathExtension: @"plist"];
     
     //setup modal for new controller
     NSDictionary *newData = [NSDictionary dictionaryWithObjectsAndKeys:DEFAULT_NAME_MESSAGE,kNameKey,newPath,kPathKey, nil];
@@ -79,7 +81,7 @@
 //    [newDatas addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:NOTE_CELL,kCellTypeKey,DEFAULT_NOTE_MESSAGE,kCellTextKey, nil]];
 
     newPersonViewController.view.tag = [self.datas count];
-    newPersonViewController.dataSourcePath = newPath;
+    newPersonViewController.dataSourceDirPath = newPath;
     newPersonViewController.delegate = self;
     [self.datas addObject:newData];
     return newPersonViewController;
@@ -193,7 +195,7 @@
     PersonalInterviewViewController *nextController = [[PersonalInterviewViewController alloc] init];
     
     nextController.view.tag = indexPath.row;
-    nextController.dataSourcePath = [[self.datas objectAtIndex:indexPath.row] valueForKey:kPathKey];
+    nextController.dataSourceDirPath = [[self.datas objectAtIndex:indexPath.row] valueForKey:kPathKey];
     nextController.delegate = self;
     [self.navigationController pushViewController:nextController animated:YES];
 }
