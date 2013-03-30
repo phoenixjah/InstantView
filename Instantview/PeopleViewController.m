@@ -55,6 +55,7 @@
     }
     return _datas;
 }
+
 #pragma mark - ProfileUpdateDelegate Method
 -(void)updatedProfile:(NSDictionary *)data atIndex:(NSInteger)index{
     NSLog(@"update profile at cell %d",index);
@@ -64,7 +65,6 @@
 }
 
 #pragma mark - Add Btn Function
-
 -(PersonalInterviewViewController*)prepareForNewInterview{
     PersonalInterviewViewController *newPersonViewController = [[PersonalInterviewViewController alloc] init];
     
@@ -123,6 +123,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    NSLog(@"viewWillDisappear");
     //write file
     NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
     if([self.datas writeToFile:path atomically:YES]==NO){
@@ -146,8 +147,8 @@
 {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-#pragma mark - TableView Delegate
 
+#pragma mark - TableView Delegate
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 
     //NSLog(@"number of Object = %d",[self.datas count]);
@@ -206,14 +207,25 @@
 }
 
 -(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-    // Only allow editing in the ingredients section.
-    // In the ingredients section, the last row (row number equal to the count of ingredients) is added automatically (see tableView:cellForRowAtIndexPath:) to provide an insertion cell, so configure that cell for insertion; the other cells are configured for deletion.
-    
+
     return UITableViewCellEditingStyleDelete;
 
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"edit it!!");
+    //NSLog(@"edit it!!");
+    [self.tableView beginUpdates];
+    //must be delete
+    NSString *dirPath = [[self.datas objectAtIndex:indexPath.row] valueForKey:kPathKey];
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    //NSLog(@"delete index %d",indexPath.row);
+    [self.datas removeObjectAtIndex:indexPath.row];
+    [[NSFileManager defaultManager] removeItemAtPath:dirPath error:nil];
+    
+    //write to files
+    NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
+    if([self.datas writeToFile:path atomically:YES]==NO){
+        NSLog(@"in ViewDisappear write file error");
+    }
+    [self.tableView endUpdates];
 }
 @end

@@ -527,12 +527,6 @@ static BOOL updateProfile = NO;
     self.closeBtn = nil;
 }
 
--(void)viewWillAppear:(BOOL)animated{
-      //[[self.navigationController navigationBar] setBackgroundImage:[UIImage imageNamed:@"int_nav.gif"] forBarMetrics:UIBarMetricsDefault];
-    //load data
-    
-}
-
 -(void)viewWillDisappear:(BOOL)animated{
     //NSLog(@"in viewWillDisappear");
     if (btnsShow) {
@@ -552,4 +546,47 @@ static BOOL updateProfile = NO;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+#pragma mark - UITableView datasource delegate, reorder and delete
+-(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (indexPath.row == 0) {
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+-(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    return UITableViewCellEditingStyleDelete;
+    
+}
+-(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
+    //NSLog(@"edit it!!");
+    [self.tableView beginUpdates];
+    
+    //delete functions
+
+    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    
+    //see which type of cell is deleted, if photo type, the file in dir has to be deleted as well
+    NSMutableDictionary *cellInEdit = [self.datas objectAtIndex:indexPath.row];
+    if ([[cellInEdit valueForKey:kCellTypeKey] isEqualToString:PHOTO_CELL]) {
+        //delete the image file in directory
+        NSString *imagePath = [cellInEdit valueForKey:kCellPhotoKey];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
+            if ([[NSFileManager defaultManager] removeItemAtPath:imagePath error:nil] == NO) {
+                NSLog(@"delete image in dir error");
+            }
+        }
+    }
+    [self.datas removeObjectAtIndex:indexPath.row];
+    
+    //write to files
+    NSString *path = [self.dataSourceDirPath stringByAppendingPathComponent:INDIVIDUAL_FILE_NAME];
+    if([self.datas writeToFile:path atomically:YES] == NO){
+        NSLog(@"in second hierarchy ViewDisappear write file error");
+    }
+    [self.tableView endUpdates];
+}
 @end

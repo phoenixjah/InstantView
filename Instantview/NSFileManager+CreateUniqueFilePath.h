@@ -10,5 +10,4 @@
 
 @interface NSFileManager (CreateUniqueFilePath)
 +(NSString*)createUniqueFileName;
-+(BOOL)deleteImagesFromPlist:(NSString*)path;
 @end

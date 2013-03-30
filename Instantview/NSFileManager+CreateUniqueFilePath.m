@@ -21,8 +21,4 @@
     return newUniqueName;
 }
 
-+(BOOL)deleteImagesFromPlist:(NSString *)path{
-    
-    return YES;
-}
 @end
