@@ -12,13 +12,17 @@
 #import "UIImageView+ImagePackage.h"
 #import "NSFileManager+CreateUniqueFilePath.h"
 #import "Constant.h"
+#import "JTTableViewGestureRecognizer.h"
 
-@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate>
+@interface PersonalInterviewViewController ()<UITableViewDelegate, UITableViewDataSource,UITextFieldDelegate,UIImagePickerControllerDelegate,MFMailComposeViewControllerDelegate,UITextViewDelegate,JTTableViewGestureEditingRowDelegate,JTTableViewGestureMoveRowDelegate>
+
 @property (nonatomic,strong) NSMutableArray *datas;
 @property (nonatomic,strong) UITableView *tableView;
 @property (nonatomic,strong) NSArray *btns;
 @property (nonatomic,assign) NSInteger selectedRow;
 @property (nonatomic,strong) UIBarButtonItem *backBtn,*addElementBtn,*closeBtn;
+@property (nonatomic,strong) JTTableViewGestureRecognizer *tableViewRecognizer;
+@property (nonatomic,strong) id grabbedObject;
 @end
 
 @implementation PersonalInterviewViewController
@@ -365,6 +369,12 @@ static BOOL updateProfile = NO;
         UILabel *cellLabel = (UILabel*)[cell viewWithTag:TEXT_TAG];
         cellLabel.text = [[self.datas objectAtIndex:indexPath.row] objectForKey:kCellTextKey];
     }
+    if (self.grabbedObject != nil && [[self.datas objectAtIndex:indexPath.row] isEqual:self.grabbedObject]) {
+        //NSLog(@"indexPath %d",indexPath.row);
+        cell.contentView.hidden = YES;
+    }else{
+        cell.contentView.hidden = NO;
+    }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
 }
 
@@ -388,7 +398,7 @@ static BOOL updateProfile = NO;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSLog(@"did selected %d",indexPath.row);
+    //NSLog(@"did selected %d",indexPath.row);
     UITableViewCell *selectedCell = [self.tableView cellForRowAtIndexPath:indexPath];
     self.selectedRow = indexPath.row;
     
@@ -472,8 +482,11 @@ static BOOL updateProfile = NO;
     
 	// Do any additional setup after loading the view.
     
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(savePersonalDatasToFile)
+//                                                 name:UIApplicationWillResignActiveNotification
+//                                               object:[UIApplication sharedApplication]];
     //setup subviews template
-        
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -1, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
@@ -512,7 +525,9 @@ static BOOL updateProfile = NO;
     self.closeBtn = [[UIBarButtonItem alloc] initWithCustomView:closeAddBtn];
     
     //add Gesture Recognizer
-    //[self.tableView.panGestureRecognizer addTarget:self action:@selector(addElementPressed:)];
+    self.tableViewRecognizer = [self.tableView enableGestureTableViewWithDelegate:self];
+    //UIGestureRecognizer *longPressGR = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(setToReorder:)];
+    //[self.tableView addGestureRecognizer:longPressGR];
 }
 
 - (void)viewDidUnload
@@ -547,6 +562,9 @@ static BOOL updateProfile = NO;
 }
 
 #pragma mark - UITableView datasource delegate, reorder and delete
+-(void)setToReorder:(UIPanGestureRecognizer*)gestureRecognizer{
+    [self.tableView setEditing:YES animated:YES];
+}
 -(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
     
     if (indexPath.row == 0) {
@@ -558,7 +576,7 @@ static BOOL updateProfile = NO;
 
 -(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    return UITableViewCellEditingStyleDelete;
+    return UITableViewCellEditingStyleNone;
     
 }
 -(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -589,4 +607,119 @@ static BOOL updateProfile = NO;
     }
     [self.tableView endUpdates];
 }
+
+-(BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.row == 0) {
+        return NO;
+    }else{
+        return YES;
+    }
+}
+-(void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath{
+    
+    [self.tableView setEditing:NO animated:YES];
+    //manage data
+    NSMutableDictionary *yubi = [self.datas objectAtIndex:sourceIndexPath.row];
+    [self.datas replaceObjectAtIndex:sourceIndexPath.row  withObject:[self.datas objectAtIndex:destinationIndexPath.row]];
+    [self.datas insertObject:yubi atIndex:destinationIndexPath.row];
+}
+
+-(NSIndexPath*)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath{
+   
+    //the moving element can only move to second place at most, as top is reserved for profile cell
+    if (proposedDestinationIndexPath.row == 0) {
+        return [NSIndexPath indexPathForRow:1 inSection:proposedDestinationIndexPath.section];
+    }else{
+        return proposedDestinationIndexPath;
+    }
+    
+}
+
+#pragma mark - JTTableViewGestureEditingRowDelegate
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer didEnterEditingState:(JTTableViewCellEditingState)state forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+    //UIColor *backgroundColor = nil;
+    switch (state) {
+        case JTTableViewCellEditingStateRight:
+            cell.alpha = 0.6;
+            break;
+            
+        default:
+            cell.alpha = 1;
+            break;
+    }
+    //cell.contentView.backgroundColor = backgroundColor;
+}
+
+// This is needed to be implemented to let our delegate choose whether the panning gesture should work
+- (BOOL)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    if (indexPath.row == 0) {
+        //profile cell is not allowed to delete
+        return NO;
+    }else if ([self.datas count] == 2){
+        //save at least one cell or it looks unly
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer commitEditingState:(JTTableViewCellEditingState)state forRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableView *tableView = gestureRecognizer.tableView;
+    [tableView beginUpdates];
+    if (state == JTTableViewCellEditingStateRight) {
+        // An example to discard the cell
+        [self.datas removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationLeft];
+    } else {
+        // JTTableViewCellEditingStateMiddle shouldn't really happen in
+        // - [JTTableViewGestureDelegate gestureRecognizer:commitEditingState:forRowAtIndexPath:]
+    }
+    [tableView endUpdates];
+    
+    // Row color needs update after datasource changes, reload it.
+    [tableView performSelector:@selector(reloadVisibleRowsExceptIndexPath:) withObject:indexPath afterDelay:JTTableViewRowAnimationDuration];
+}
+
+#pragma mark JTTableViewGestureMoveRowDelegate
+
+- (BOOL)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.row == 0) {
+        //profile cell is not allowed to move
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer needsCreatePlaceholderForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    self.grabbedObject = [self.datas objectAtIndex:indexPath.row];
+    //[self.datas replaceObjectAtIndex:indexPath.row withObject:[NSNull null]];
+}
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer needsMoveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    id object = [self.datas objectAtIndex:sourceIndexPath.row];
+    [self.datas removeObjectAtIndex:sourceIndexPath.row];
+    [self.datas insertObject:object atIndex:destinationIndexPath.row];
+}
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer needsReplacePlaceholderForRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.datas replaceObjectAtIndex:indexPath.row withObject:self.grabbedObject];
+    self.grabbedObject = nil;
+}
+#pragma mark-Background task
+-(void)savePersonalDatasToFile{
+    NSLog(@"%@",NSStringFromSelector(_cmd));
+    //update files in dir
+    NSString *path = [self.dataSourceDirPath stringByAppendingPathComponent:INDIVIDUAL_FILE_NAME];
+    if([self.datas writeToFile:path atomically:YES] == NO){
+        NSLog(@"in second hierarchy ViewDisappear write file error");
+    }
+}
+
 @end

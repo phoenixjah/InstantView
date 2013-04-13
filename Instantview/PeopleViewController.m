@@ -11,6 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "Constant.h"
 #import "NSFileManager+CreateUniqueFilePath.h"
+#import "JTTableViewGestureRecognizer.h"
 
 #define CELL_HEIGHT 150
 
@@ -18,9 +19,10 @@
 #define kImageKey @"Portrait"
 #define kPathKey @"DirPath"
 
-@interface PeopleViewController ()<UITableViewDelegate,UITableViewDataSource,ProfileUpdateDelegate>
+@interface PeopleViewController ()<UITableViewDelegate,UITableViewDataSource,ProfileUpdateDelegate,JTTableViewGestureEditingRowDelegate>
 @property (nonatomic,strong) NSMutableArray *datas;
 @property (nonatomic,strong) UITableView *tableView;
+@property (nonatomic,strong) JTTableViewGestureRecognizer *tableViewRecognizer;
 @end
 
 @implementation PeopleViewController
@@ -104,6 +106,11 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     
+    //prepare for before entering background
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(saveDatasToFile)
+//                                                 name:UIApplicationWillResignActiveNotification
+//                                               object:[UIApplication sharedApplication]];
     //setup TableView
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.dataSource = self;
@@ -119,11 +126,13 @@
     addNewPeopleBtn.frame = CGRectMake(0, 0, 32, 32);
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithCustomView:addNewPeopleBtn];
     self.navigationItem.rightBarButtonItem = addButton;
+    
+    self.tableViewRecognizer = [self.tableView enableGestureTableViewWithDelegate:self];
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    NSLog(@"viewWillDisappear");
+    //NSLog(@"viewWillDisappear");
     //write file
     NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
     if([self.datas writeToFile:path atomically:YES]==NO){
@@ -201,31 +210,68 @@
     [self.navigationController pushViewController:nextController animated:YES];
 }
 
-#pragma mark - UITableView datasource delegate, reorder and delete
--(BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath{
-    return YES;
+#pragma mark - UITableView datasource delegate, for delete
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer didEnterEditingState:(JTTableViewCellEditingState)state forRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+//    
+//    UIColor *backgroundColor = nil;
+    switch (state) {
+//        case JTTableViewCellEditingStateMiddle:
+//            backgroundColor = [[UIColor redColor] colorWithHueOffset:0.12 * indexPath.row / [self tableView:self.tableView numberOfRowsInSection:indexPath.section]];
+//            break;
+        case JTTableViewCellEditingStateRight:
+            cell.alpha = 0.6;
+            break;
+        default:
+            cell.alpha = 1;
+            break;
+    }
+//    cell.contentView.backgroundColor = backgroundColor;
+//    if ([cell isKindOfClass:[TransformableTableViewCell class]]) {
+//        ((TransformableTableViewCell *)cell).tintColor = backgroundColor;
+//    }
 }
 
--(UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath{
-
-    return UITableViewCellEditingStyleDelete;
-
-}
--(void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath{
-    //NSLog(@"edit it!!");
-    [self.tableView beginUpdates];
-    //must be delete
-    NSString *dirPath = [[self.datas objectAtIndex:indexPath.row] valueForKey:kPathKey];
-    [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    //NSLog(@"delete index %d",indexPath.row);
-    [self.datas removeObjectAtIndex:indexPath.row];
-    [[NSFileManager defaultManager] removeItemAtPath:dirPath error:nil];
+- (BOOL)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    //write to files
+    if ([self.datas count] == 1) {
+        //if only one left, then delete is not allowed
+        return NO;
+    }else{
+        return YES;
+    }
+}
+
+- (void)gestureRecognizer:(JTTableViewGestureRecognizer *)gestureRecognizer commitEditingState:(JTTableViewCellEditingState)state forRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableView *tableView = gestureRecognizer.tableView;
+    [tableView beginUpdates];
+    if (state == JTTableViewCellEditingStateRight) {
+        // An example to discard the cell at JTTableViewCellEditingStateLeft
+        
+        //delete datas in dir
+        NSString *dirPath = [[self.datas objectAtIndex:indexPath.row] valueForKey:kPathKey];
+        //NSLog(@"delete index %d",indexPath.row);
+        [self.datas removeObjectAtIndex:indexPath.row];
+        [[NSFileManager defaultManager] removeItemAtPath:dirPath error:nil];
+        
+ 
+        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+    }else {
+        // JTTableViewCellEditingStateMiddle shouldn't really happen in
+        // - [JTTableViewGestureDelegate gestureRecognizer:commitEditingState:forRowAtIndexPath:]
+    }
+    [tableView endUpdates];
+    
+    // Row color needs update after datasource changes, reload it.
+    [tableView performSelector:@selector(reloadVisibleRowsExceptIndexPath:) withObject:indexPath afterDelay:JTTableViewRowAnimationDuration];
+}
+#pragma mark-Background task
+-(void)saveDatasToFile{
+    //NSLog(@"%@",NSStringFromSelector(_cmd));
+    //update files in dir
     NSString *path = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:APP_FILENAME];
     if([self.datas writeToFile:path atomically:YES]==NO){
         NSLog(@"in ViewDisappear write file error");
     }
-    [self.tableView endUpdates];
 }
 @end
